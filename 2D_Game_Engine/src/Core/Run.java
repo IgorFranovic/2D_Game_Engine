@@ -1,6 +1,9 @@
 package Core;
 
 import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
 
 public abstract class Run extends Canvas implements Runnable {
 	private Thread thread;
@@ -38,11 +41,11 @@ public abstract class Run extends Canvas implements Runnable {
 			 delta += (now - lastTime) / ns;
 			 lastTime = now;
 			 while(delta >= 1) {
-				 update();
+				 this.update();
 				 delta--;
 			 }
 			 if(running)
-				 render();
+				 this.render();
 			 FPS++;
 			 
 			 if(System.currentTimeMillis() - timer > 1000) {
@@ -56,9 +59,21 @@ public abstract class Run extends Canvas implements Runnable {
 	}
 	
 	public void update() {
-		
+	
 	}
 	public void render() {
+		BufferStrategy bufferStrategy = this.getBufferStrategy();
+		if(bufferStrategy == null) {
+			this.createBufferStrategy(3);
+			return;
+		}
+		Graphics g = bufferStrategy.getDrawGraphics();
+		/*This part will be reworked to make it easier for the user*/
+		g.setColor(Color.black);
+		g.fillRect(0, 0, WIDTH, HEIGHT);
+		TestClass.draw(g);
+		g.dispose();
+		bufferStrategy.show();
 		
 	}
 	public int getFPS() {

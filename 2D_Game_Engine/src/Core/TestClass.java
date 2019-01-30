@@ -1,5 +1,6 @@
 package Core;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
@@ -20,29 +21,26 @@ import java.awt.image.BufferStrategy;
 
 public class TestClass extends Run {
 	
+	public static final int WIDTH = 1200, HEIGHT = 600;
+	
 	public TestClass() {
-		this.start();
+		new Window(WIDTH, HEIGHT, "TestClass", this);
 	}
 
-	public static void main(String[] args) {
-		new TestClass();
+
+	public static void draw(Graphics g) {
+		g.setColor(Color.black);
+		g.fillRect(0, 0, WIDTH, HEIGHT);
 	}
 	
 	@Override
 	public void update() {
 		System.out.println("Test " + this.getFPS());
 	}
-	@Override
-	public void render() {
-		BufferStrategy bufferStrategy = this.getBufferStrategy();
-		if(bufferStrategy == null) {
-			this.createBufferStrategy(3);
-			return;
-		}
-		Graphics g = bufferStrategy.getDrawGraphics();
-		/*This part will be reworked to make it easier for the user*/
 	
-	}
 
+	public static void main(String[] args) {
+		new TestClass();
+	}
 
 }
