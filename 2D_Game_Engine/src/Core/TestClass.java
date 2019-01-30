@@ -41,6 +41,7 @@ public class TestClass extends Run {
 		}
 		Graphics g = bufferStrategy.getDrawGraphics();
 		/*This part will be reworked to make it easier for the user*/
+	
 	}
 
 

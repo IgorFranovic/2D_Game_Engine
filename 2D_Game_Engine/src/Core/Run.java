@@ -62,7 +62,8 @@ public abstract class Run extends Canvas implements Runnable {
 		
 	}
 	public int getFPS() {
-		return this.FPS;
+		return this.FPS; 
+		
 	}
 
 }
