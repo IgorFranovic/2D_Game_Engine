@@ -15,7 +15,7 @@ import java.awt.image.BufferStrategy;
  *  
  *  The update() method is called once every frame.
  *  
- *  The render() method contains method calls related to drawing
+ *  The draw() method contains method calls related to drawing
  *  graphics.
  * */
 
