@@ -1,5 +1,6 @@
 package Core;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import GameGraphics.Piece;
 import GameGraphics.Structure;

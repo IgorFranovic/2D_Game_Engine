@@ -36,5 +36,9 @@ public class ObjectHandler {
 			this.objectList.removeFirst();
 		}
 	}
+	
+	public LinkedList<GameObject> getObjectList(){
+		return this.objectList;
+	}
 
 }
