@@ -7,7 +7,7 @@ public class Object_Handler {
 	
 	
 	LinkedList<GameObject> object = new LinkedList<GameObject>();
-	public void tick() {
+	public void update() {
 		GameObject tempObject;
 		for(int i = 0; i< object.size(); i++) {
 			tempObject = object.get(i);
