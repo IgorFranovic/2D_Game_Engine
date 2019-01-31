@@ -1,8 +1,8 @@
 package GameGraphics;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.util.LinkedList;
 
 public class Structure {
@@ -34,6 +34,12 @@ public class Structure {
 			}
 		}
 		return false;
+	}
+	
+	public void transform(AffineTransform at) {
+		for(Piece piece : this.struct) {
+			piece.transform(at);
+		}
 	}
 
 	public LinkedList<Piece> getStruct() {

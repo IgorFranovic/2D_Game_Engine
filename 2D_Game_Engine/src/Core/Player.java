@@ -1,6 +1,5 @@
 package Core;
 
-import Controls.KeyboardInput;
 import GameGraphics.Structure;
 
 public class Player extends GameObject {

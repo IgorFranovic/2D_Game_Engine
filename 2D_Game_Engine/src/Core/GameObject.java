@@ -1,7 +1,8 @@
 package Core;
 
-import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
+
 import GameGraphics.Piece;
 import GameGraphics.Structure;
 
@@ -38,6 +39,10 @@ public abstract class GameObject {
 		else {
 			return false;
 		}
+	}
+	
+	public void transform(AffineTransform at) {
+		this.structure.transform(at);
 	}
 	
 	public abstract void update(); // defines the changes to the object during time

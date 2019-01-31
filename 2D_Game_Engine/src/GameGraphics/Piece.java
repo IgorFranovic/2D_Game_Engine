@@ -3,6 +3,7 @@ package GameGraphics;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 
 public class Piece {
 	
@@ -28,6 +29,10 @@ public class Piece {
 		else {
 			return false;
 		}
+	}
+	
+	public void transform(AffineTransform at) {
+		this.shape = at.createTransformedShape(this.shape);
 	}
 
 	public Shape getShape() {
