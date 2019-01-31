@@ -3,31 +3,38 @@ package Core;
 import java.awt.Graphics;
 import java.util.LinkedList;
 
-public class Object_Handler {
+public class ObjectHandler {
 	
+	private LinkedList<GameObject> objectList;
 	
-	LinkedList<GameObject> objectList = new LinkedList<GameObject>();
+	public ObjectHandler() {
+		this.objectList = new LinkedList<GameObject>();
+	}
+	
 	public void update() {
-		GameObject tempObject;
 		for(int i = 0; i< objectList.size(); i++) {
-			tempObject = objectList.get(i);
-			tempObject.update();
+			objectList.get(i).update();
 		}
 	}
+	
 	public void render(Graphics g) {
-		GameObject tempObject;
 		for(int i = 0; i<objectList.size(); i++) {
-			tempObject = objectList.get(i);
-			tempObject.render(g);
+			objectList.get(i).render(g);
 		}
 	}
 
-	
 	public void addObject(GameObject object) {
 		this.objectList.add(object);
 	}
+	
 	public void removeObject(GameObject object) {
 		this.objectList.remove(object);
+	}
+	
+	public void clearList() {
+		for(int i = 0; i < this.objectList.size(); i++) {
+			this.objectList.removeFirst();
+		}
 	}
 
 }

@@ -22,6 +22,17 @@ public class Structure {
 			piece.render(G);
 		}
 	}
+	
+	public boolean intersects(Structure s) {
+		for(Piece piece1 : this.struct) {
+			for(Piece piece2 : s.struct) {
+				if(piece1.intersects(piece2)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public LinkedList<Piece> getStruct() {
 		return struct;

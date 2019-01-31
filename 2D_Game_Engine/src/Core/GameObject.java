@@ -7,7 +7,7 @@ import GameGraphics.Structure;
 public abstract class GameObject {
 	
 	protected String id; // a way to identify an object
-	protected float x, y; // (x,y) - current position, , structure elements should be positioned relative to this point
+	protected float x, y; // (x,y) - current center of mass, structure elements should be positioned relative to this point
 	protected float dx, dy; // (dx,dy) - current translation vector
 	protected float theta; // current rotational angle
 	protected Structure structure; // geometric pieces of an object: rectangles, circles etc.
@@ -24,6 +24,19 @@ public abstract class GameObject {
 	
 	public void render(Graphics g) {
 		this.structure.render(g);
+	}
+	
+	// current version of collision detection system uses the simplest form of AABB algorithm
+	// structure of each object consists of several simple geometric shapes
+	// we check for intersections between bounding rectangles of those shapes
+	// next candidate for collision detection is ray casting algorithm
+	public boolean intersects(GameObject object) {
+		if(this.structure.intersects(object.structure)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	public abstract void update(); // defines the changes to the object during time

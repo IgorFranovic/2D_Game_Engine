@@ -20,6 +20,15 @@ public class Piece {
 		G.setColor(new Color(r, g, b));
 		G.draw(shape);
 	}
+	
+	public boolean intersects(Piece piece) {
+		if(this.shape.intersects(piece.shape.getBounds2D())) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 	public Shape getShape() {
 		return shape;
