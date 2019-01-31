@@ -6,28 +6,28 @@ import java.util.LinkedList;
 public class Object_Handler {
 	
 	
-	LinkedList<GameObject> object = new LinkedList<GameObject>();
+	LinkedList<GameObject> objectList = new LinkedList<GameObject>();
 	public void update() {
 		GameObject tempObject;
-		for(int i = 0; i< object.size(); i++) {
-			tempObject = object.get(i);
+		for(int i = 0; i< objectList.size(); i++) {
+			tempObject = objectList.get(i);
 			tempObject.update();
 		}
 	}
 	public void render(Graphics g) {
 		GameObject tempObject;
-		for(int i = 0; i<object.size(); i++) {
-			tempObject = object.get(i);
+		for(int i = 0; i<objectList.size(); i++) {
+			tempObject = objectList.get(i);
 			tempObject.render(g);
 		}
 	}
 
 	
 	public void addObject(GameObject object) {
-		this.object.add(object);
+		this.objectList.add(object);
 	}
 	public void removeObject(GameObject object) {
-		this.object.remove(object);
+		this.objectList.remove(object);
 	}
 
 }
