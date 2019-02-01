@@ -8,18 +8,16 @@ import java.awt.geom.AffineTransform;
 public class Piece {
 	
 	private Shape shape;
-	private int r, g, b;
+	private Color color;
 	
-	public Piece(Shape shape, int r, int g, int b) {
+	public Piece(Shape shape, Color color) {
 		this.shape = shape;
-		this.r = r;
-		this.g = g;
-		this.b = b;
+		this.color = color;
 	}
 	
 	public void render(Graphics2D G) {
-		G.setColor(new Color(r, g, b));
-		G.draw(shape);
+		G.setColor(this.color);
+		G.fill(shape);
 	}
 	
 	public boolean intersects(Piece piece) {
@@ -39,32 +37,16 @@ public class Piece {
 		return shape;
 	}
 
-	public int getR() {
-		return r;
-	}
-
-	public int getG() {
-		return g;
-	}
-
-	public int getB() {
-		return b;
+	public Color getColor() {
+		return this.color;
 	}
 
 	public void setShape(Shape shape) {
 		this.shape = shape;
 	}
 
-	public void setR(int r) {
-		this.r = r;
-	}
-
-	public void setG(int g) {
-		this.g = g;
-	}
-
-	public void setB(int b) {
-		this.b = b;
+	public void setColor(Color color) {
+		this.color = color;
 	}
 	
 }

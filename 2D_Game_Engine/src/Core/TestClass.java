@@ -2,7 +2,8 @@ package Core;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 
 import Controls.KeyboardInput;
@@ -36,15 +37,15 @@ public class TestClass extends Run {
 		
 		this.addKeyListener(new KeyboardInput(handler));
 		
-		LinkedList<Piece> struct = new LinkedList<Piece>();
-		Structure structure = new Structure(struct);
-		Rectangle shape1 = new Rectangle(30, 30, 40, 40);
-		Piece piece = new Piece(shape1, 100, 100, 100);
+		Structure structure = new Structure(new LinkedList<Piece>());
+		Piece piece;
 		
+		piece = new Piece(new Rectangle2D.Float(30, 30, 40, 40), new Color(100, 100, 100));
+		structure.add(piece);
+		piece = new Piece(new Ellipse2D.Float(15, 55, 60, 30), new Color(150, 50, 100));
 		structure.add(piece);
 		
-		
-		handler.addObject(new Player("player1", 100, 100, 0, 0, 0, structure, handler));
+		handler.addObject(new Player("player1", 40, 60, 0, 0, 0, structure, handler));
 		
 	}
 
