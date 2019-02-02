@@ -20,7 +20,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class BuilderWindow extends JFrame {
 
@@ -31,22 +34,43 @@ public class BuilderWindow extends JFrame {
 	
 	private JRadioButton circle, ellipse, square, rectangle, polygon;
 	private ButtonGroup group;
-	private JLabel l1;
-	private JTextField color;
+	
+	//private JLabel l1;
+	//private JTextField color;
+	
+	private ColorTest ct;
+	private JPanel sliders;
+	private JSlider r, g, b;
+	
 	private JButton clear, build;
 	private JPanel inputType, controls;
 	private DrawPanel dp;
 	
+	private SliderListener sl;
 	private RadioButtonListener rbl;
 	private ButtonListener bl;
 	private MouseListener ml;
 	
+	private int red, green, blue;
 	private String selectedType;
 	private String code;
 
+	public void setRed(int red) {
+		this.red = red;
+	}
+	public void setGreen(int green) {
+		this.green = green;
+	}
+	public void setBlue(int blue) {
+		this.blue = blue;
+	}
+	
 	public Color getColor() {
-		String [] rgb = color.getText().split(",");
-		return new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+		return new Color(this.red, this.green, this.blue);
+	}
+	
+	public void setColor() {
+		this.ct.setColor(new Color(this.red, this.green, this.blue));
 	}
 	
 	public String getSelectedType() {
@@ -132,16 +156,29 @@ public class BuilderWindow extends JFrame {
 		
 		controls = new JPanel();
 		controls.setLayout(new GridLayout(1, 4));
-		controls.setPreferredSize(new Dimension(width, 40));
-		controls.setMinimumSize(new Dimension(width, 40));
-		controls.setMaximumSize(new Dimension(width, 40));
+		controls.setPreferredSize(new Dimension(width, 60));
+		controls.setMinimumSize(new Dimension(width, 60));
+		controls.setMaximumSize(new Dimension(width, 60));
 		
-		l1 = new JLabel("Color: R,G,B");
-		controls.add(l1);
+		ct = new ColorTest(Color.BLACK);
+		red = green = blue = 0;
+		controls.add(ct);
 		
-		color = new JTextField();
-		color.setText("0,0,0");
-		controls.add(color);
+		sl = new SliderListener();
+		
+		sliders = new JPanel();
+		sliders.setLayout(new GridLayout(3, 1));
+		r = new JSlider(0, 255, 0);
+		r.addChangeListener(sl);
+		sliders.add(r);
+		g = new JSlider(0, 255, 0);
+		g.addChangeListener(sl);
+		sliders.add(g);
+		b = new JSlider(0, 255, 0);
+		b.addChangeListener(sl);
+		sliders.add(b);
+		
+		controls.add(sliders);
 		
 		bl = new ButtonListener();
 		
@@ -181,6 +218,25 @@ public class BuilderWindow extends JFrame {
 			else if(e.getActionCommand().equals("build")) {
 				System.out.println(getCode());
 			}
+		}
+	}
+	
+	private class SliderListener implements ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			JSlider source = (JSlider)e.getSource();
+			int value = source.getValue();
+			if(source == r) {
+				setRed(value);
+			}
+			else if(source == g) {
+				setGreen(value);
+			}
+			else {
+				setBlue(value);
+			}
+			setColor();
+			ct.repaint();
 		}
 	}
 	
