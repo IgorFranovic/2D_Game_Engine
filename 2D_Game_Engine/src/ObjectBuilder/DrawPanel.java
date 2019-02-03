@@ -30,6 +30,11 @@ public class DrawPanel extends JPanel {
 		this.colors.addLast(color);
 	}
 	
+	public void remove() {
+		this.shapes.removeLast();
+		this.colors.removeLast();
+	}
+	
 	public Shape getCurrentShape() {
 		return this.currentShape;
 	}
@@ -54,6 +59,18 @@ public class DrawPanel extends JPanel {
 		if(this.currentShape != null) {
 			G.setColor(new Color(100, 100, 100, 100));
 			G.fill(this.currentShape);
+		}
+		G.setColor(Color.BLACK);
+		G.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
+		G.drawLine(this.getWidth()/2, 0, this.getWidth()/2, this.getHeight());
+		G.setColor(Color.LIGHT_GRAY);
+		for(int i = 1; i <= this.getHeight()/100; i++) {
+			G.drawLine(0, this.getHeight()/2-i*50, this.getWidth(), this.getHeight()/2-i*50);
+			G.drawLine(0, this.getHeight()/2+i*50, this.getWidth(), this.getHeight()/2+i*50);
+		}
+		for(int j = 1; j <= this.getWidth()/100; j++) {
+			G.drawLine(this.getWidth()/2-50*j, 0, this.getWidth()/2-50*j, this.getHeight());
+			G.drawLine(this.getWidth()/2+50*j, 0, this.getWidth()/2+50*j, this.getHeight());
 		}
 	}
 	

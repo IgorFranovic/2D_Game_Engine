@@ -12,16 +12,20 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -35,14 +39,11 @@ public class BuilderWindow extends JFrame {
 	private JRadioButton circle, ellipse, square, rectangle, polygon;
 	private ButtonGroup group;
 	
-	//private JLabel l1;
-	//private JTextField color;
-	
 	private ColorTest ct;
 	private JPanel sliders;
 	private JSlider r, g, b;
 	
-	private JButton clear, build;
+	private JButton undo, clear, build;
 	private JPanel inputType, controls;
 	private DrawPanel dp;
 	
@@ -51,9 +52,15 @@ public class BuilderWindow extends JFrame {
 	private ButtonListener bl;
 	private MouseListener ml;
 	
+	private final int x0, y0;
+	
 	private int red, green, blue;
 	private String selectedType;
-	private String code;
+	private String [] config;
+	private String path;
+	
+	private int shapeCount;
+	private LinkedList<String> shapeList;
 
 	public void setRed(int red) {
 		this.red = red;
@@ -69,27 +76,76 @@ public class BuilderWindow extends JFrame {
 		return new Color(this.red, this.green, this.blue);
 	}
 	
-	public void setColor() {
-		this.ct.setColor(new Color(this.red, this.green, this.blue));
-	}
-	
 	public String getSelectedType() {
 		return selectedType;
 	}
 
-	public String getCode() {
-		return code;
+	public int getShapeCount() {
+		return shapeCount;
+	}
+	
+	private String getShapeList(){
+		if(this.shapeList.isEmpty()) {
+			return "0";
+		}
+		else {
+			String temp = Integer.toString(getShapeCount()) + System.lineSeparator();
+			for(int i = 0; i < this.shapeList.size()-1; i++) {
+				temp += (this.shapeList.get(i) + System.lineSeparator());
+			}
+			temp += this.shapeList.get(this.shapeList.size()-1);
+			return temp;
+		}
+	}
+	
+	public String getPath() {
+		return path;
+	}
+	
+	public void setColor() {
+		this.ct.setColor(new Color(this.red, this.green, this.blue));
 	}
 
 	public void setSelectedType(String selectedType) {
 		this.selectedType = selectedType;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setShapeCount(int cnt) {
+		this.shapeCount = cnt;
+	}
+	
+	public void pushShape(String shape) {
+		this.shapeList.addLast(shape);
+	}
+	
+	public String popShape() {
+		String shape = this.shapeList.getLast();
+		this.shapeList.removeLast();
+		return shape;
+	}
+	
+	public void clearShapeList() {
+		this.shapeList.clear();
 	}
 
-	public BuilderWindow(int width, int height) {
+	public BuilderWindow() {		
+		config = new String[3];
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(new File("./2D_Game_Engine/Configuration Files/ObjectBuilderConfig.txt")));
+			for(int i = 0; i < 3; i++) {
+				config[i] = br.readLine();
+			}
+			br.close();
+		}
+		catch (IOException exc) {
+			exc.printStackTrace();
+		}
+		
+		int width = Integer.parseInt(config[0].substring(config[0].indexOf('=')+1));
+		int height = Integer.parseInt(config[1].substring(config[1].indexOf('=')+1));
+		
+		path = config[2].substring(config[2].indexOf('=')+1);
+		
 		this.setTitle("Builder Window");
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(width, height));
@@ -154,8 +210,12 @@ public class BuilderWindow extends JFrame {
 		dp.addMouseWheelListener(ml);
 		this.add(dp, BorderLayout.CENTER);
 		
+		// questionable
+		this.x0 = width/2 - 7;
+		this.y0 = height/2 - 40 - 29;
+		
 		controls = new JPanel();
-		controls.setLayout(new GridLayout(1, 4));
+		controls.setLayout(new GridLayout(1, 5));
 		controls.setPreferredSize(new Dimension(width, 60));
 		controls.setMinimumSize(new Dimension(width, 60));
 		controls.setMaximumSize(new Dimension(width, 60));
@@ -182,7 +242,12 @@ public class BuilderWindow extends JFrame {
 		
 		bl = new ButtonListener();
 		
-		clear= new JButton("Clear");
+		undo = new JButton("Undo");
+		undo.setActionCommand("undo");
+		undo.addActionListener(bl);
+		controls.add(undo);
+		
+		clear = new JButton("Clear");
 		clear.setActionCommand("clear");
 		clear.addActionListener(bl);
 		controls.add(clear);
@@ -194,7 +259,8 @@ public class BuilderWindow extends JFrame {
 		
 		this.add(controls, BorderLayout.SOUTH);
 		
-		code = "\n";
+		shapeList = new LinkedList<String>();
+		shapeCount = 0;
 		
 		this.pack();
 		this.setVisible(true);
@@ -210,13 +276,43 @@ public class BuilderWindow extends JFrame {
 	private class ButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(e.getActionCommand().equals("clear")) {
-				setCode("\n");
+			if(e.getActionCommand().equals("undo") && getShapeCount() > 0) {
+				popShape();
+				setShapeCount(getShapeCount() - 1);
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path + "object.dat")));
+					bw.write(getShapeList());
+					bw.close();
+				}
+				catch (IOException exc) {
+					exc.printStackTrace();
+				}
+				dp.remove();
+				dp.repaint();
+			}
+			else if(e.getActionCommand().equals("clear")) {
+				clearShapeList();
+				setShapeCount(0);
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path + "object.dat")));
+					bw.write("0");
+					bw.close();
+				}
+				catch (IOException exc) {
+					exc.printStackTrace();
+				}
 				dp.clear();
 				dp.repaint();
 			}
 			else if(e.getActionCommand().equals("build")) {
-				System.out.println(getCode());
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path + "object.dat")));
+					bw.write(getShapeList());
+					bw.close();
+				}
+				catch (IOException exc) {
+					exc.printStackTrace();
+				}
 			}
 		}
 	}
@@ -323,8 +419,8 @@ public class BuilderWindow extends JFrame {
 				int y = this.y1 - r;
 				Color color = getColor();
 				dp.add(new Ellipse2D.Float(x, y, 2*r, 2*r), color);
-				setCode(getCode() + String.format("Circle (%d,%d,%d,%d) (%d,%d,%d)\n", x, y, 2*r, 2*r,
-																					color.getRed(), color.getGreen(), color.getBlue()));
+				pushShape(String.format("Circle %d,%d,%d,%d %d,%d,%d\n", x-x0, y-y0, 2*r, 2*r, color.getRed(), color.getGreen(), color.getBlue()));
+				setShapeCount(getShapeCount() + 1);
 				this.x1 = this.y1 = this.x2 = this.y2 = -1;
 				dp.setCurrentShape(null);
 				dp.repaint();
@@ -336,8 +432,8 @@ public class BuilderWindow extends JFrame {
 				int height = Math.abs(this.y2 - this.y1);
 				Color color = getColor();
 				dp.add(new Ellipse2D.Float(x, y, width, height), color);
-				setCode(getCode() + String.format("Ellipse (%d,%d,%d,%d) (%d,%d,%d)\n", x, y, width, height,
-																					color.getRed(), color.getGreen(), color.getBlue()));
+				pushShape(String.format("Ellipse %d,%d,%d,%d %d,%d,%d\n", x-x0, y-y0, width, height, color.getRed(), color.getGreen(), color.getBlue()));
+				setShapeCount(getShapeCount() + 1);
 				this.x1 = this.y1 = this.x2 = this.y2 = -1;
 				dp.setCurrentShape(null);
 				dp.repaint();
@@ -348,8 +444,8 @@ public class BuilderWindow extends JFrame {
 				int y = this.y1 - r;
 				Color color = getColor();
 				dp.add(new Rectangle2D.Float(x, y, 2*r, 2*r), color);
-				setCode(getCode() + String.format("Square (%d,%d,%d,%d) (%d,%d,%d)\n", x, y, 2*r, 2*r,
-																					color.getRed(), color.getGreen(), color.getBlue()));
+				pushShape(String.format("Square %d,%d,%d,%d %d,%d,%d\n", x-x0, y-y0, 2*r, 2*r, color.getRed(), color.getGreen(), color.getBlue()));
+				setShapeCount(getShapeCount() + 1);
 				this.x1 = this.y1 = this.x2 = this.y2 = -1;
 				dp.setCurrentShape(null);
 				dp.repaint();
@@ -361,8 +457,8 @@ public class BuilderWindow extends JFrame {
 				int height = Math.abs(this.y2 - this.y1);
 				Color color = getColor();
 				dp.add(new Rectangle2D.Float(x, y, width, height), color);
-				setCode(getCode() + String.format("Rectangle (%d,%d,%d,%d) (%d,%d,%d)\n", x, y, width, height,
-																					color.getRed(), color.getGreen(), color.getBlue()));
+				pushShape(String.format("Rectangle %d,%d,%d,%d %d,%d,%d\n", x-x0, y-y0, width, height, color.getRed(), color.getGreen(), color.getBlue()));
+				setShapeCount(getShapeCount() + 1);
 				this.x1 = this.y1 = this.x2 = this.y2 = -1;
 				dp.setCurrentShape(null);
 				dp.repaint();
@@ -376,11 +472,13 @@ public class BuilderWindow extends JFrame {
 				Color color = getColor();
 				dp.add(dp.getCurrentShape(), color);
 				String temp = "Polygon ";
-				for(int i = 0; i < this.xp.size(); i++) {
-					temp += String.format("(%d,%d),", this.xp.get(i), this.yp.get(i));
+				for(int i = 0; i < this.xp.size()-1; i++) {
+					temp += String.format("%d,%d;", this.xp.get(i)-x0, this.yp.get(i)-y0);
 				}
-				temp += String.format(" (%d,%d,%d)\n", color.getRed(), color.getGreen(), color.getBlue());
-				setCode(getCode() + temp);
+				temp += String.format("%d,%d", this.xp.get(this.xp.size()-1)-x0, this.yp.get(this.xp.size()-1)-y0);
+				temp += String.format(" %d,%d,%d\n", color.getRed(), color.getGreen(), color.getBlue());
+				pushShape(temp);
+				setShapeCount(getShapeCount() + 1);
 				this.xp.clear();
 				this.yp.clear();
 				dp.setCurrentShape(null);
