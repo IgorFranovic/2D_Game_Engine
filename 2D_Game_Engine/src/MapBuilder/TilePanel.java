@@ -37,7 +37,7 @@ public class TilePanel extends JPanel {
 		tiles = new LinkedList<BufferedImage>();
 		try {
 			for(int i = 0; i < assets.length; i++) {
-				BufferedImage newImage = ImageIO.read(new File("Assets/LandTiles/" + assets[i]));	
+				BufferedImage newImage = ImageIO.read(new File(BuilderWindow.assetsPath + "LandTiles/" + assets[i]));	
 				tiles.add(newImage);
 				listSize++;
 			}
