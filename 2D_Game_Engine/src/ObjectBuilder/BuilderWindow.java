@@ -401,7 +401,7 @@ public class BuilderWindow extends JFrame {
 				popShape();
 				setShapeCount(getShapeCount() - 1);
 				try {
-					BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path + "object.dat")));
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path + name.getText() + ".dat")));
 					bw.write(getShapeList());
 					bw.close();
 				}
@@ -415,7 +415,7 @@ public class BuilderWindow extends JFrame {
 				clearShapeList();
 				setShapeCount(0);
 				try {
-					BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path + "object.dat")));
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path + name.getText() + ".dat")));
 					bw.write("0");
 					bw.close();
 				}
@@ -427,7 +427,7 @@ public class BuilderWindow extends JFrame {
 			}
 			else if(e.getActionCommand().equals("build")) {
 				try {
-					BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path + "object.dat")));
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path + name.getText() + ".dat")));
 					bw.write(getShapeList());
 					bw.close();
 				}
