@@ -32,9 +32,7 @@ public class ObjectHandler {
 	}
 	
 	public void clearList() {
-		for(int i = 0; i < this.objectList.size(); i++) {
-			this.objectList.removeFirst();
-		}
+		this.objectList.clear();
 	}
 	
 	public LinkedList<GameObject> getObjectList(){
