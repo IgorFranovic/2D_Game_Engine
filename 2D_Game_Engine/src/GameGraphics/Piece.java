@@ -32,7 +32,7 @@ public class Piece {
 	public void transform(AffineTransform at) {
 		this.shape = at.createTransformedShape(this.shape);
 	}
-
+	
 	public Shape getShape() {
 		return shape;
 	}

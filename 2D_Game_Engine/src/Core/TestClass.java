@@ -53,9 +53,7 @@ public class TestClass extends Run {
 	@Override
 	public void update() {
 //		System.out.println("Test " + this.getFPS());
-		for(GameObject obj : handler.getObjectList()) {
-			obj.update();
-		}
+		handler.update();
 	}
 	
 
