@@ -2,12 +2,8 @@ package Core;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.util.LinkedList;
 
 import Controls.KeyboardInput;
-import GameGraphics.Piece;
 import GameGraphics.Structure;
 
 /*
@@ -27,6 +23,11 @@ import GameGraphics.Structure;
 
 public class TestClass extends Run {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2047332610043354456L;
+	
 	public static final int WIDTH = 1200, HEIGHT = 600;
 	private static ObjectHandler handler;
 	
@@ -37,21 +38,13 @@ public class TestClass extends Run {
 		
 		this.addKeyListener(new KeyboardInput(handler));
 		
-		Structure structure = new Structure(new LinkedList<Piece>());
-		Piece piece;
-		
-		piece = new Piece(new Rectangle2D.Float(30, 30, 40, 40), new Color(100, 100, 100));
-		structure.add(piece);
-		piece = new Piece(new Ellipse2D.Float(15, 55, 60, 30), new Color(150, 50, 100));
-		structure.add(piece);
-		
-		handler.addObject(new Player("player1", 40, 60, 0, 0, 0, structure, handler));
+		handler.addObject(new Player("player1", new Structure("./2D_Game_Engine/Objects/avatar.dat", 200, 200), 200, 200, handler));
 		
 	}
 
 
 	public static void draw(Graphics g) {
-		g.setColor(Color.black);
+		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		handler.render(g);
 		

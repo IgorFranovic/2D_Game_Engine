@@ -18,10 +18,6 @@ public class ColorTest extends JPanel {
 		this.color = color;
 	}
 	
-	public ColorTest() {
-		
-	}
-	
 	public ColorTest(Color color) {
 		this.color = color;
 	}

@@ -2,6 +2,7 @@ package Core;
 
 import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 import GameGraphics.Piece;
 import GameGraphics.Structure;
@@ -9,20 +10,96 @@ import GameGraphics.Structure;
 public abstract class GameObject {
 	
 	protected String id; // a way to identify an object
-	protected float x, y; // (x,y) - current center of mass, structure elements should be positioned relative to this point
-	protected float dx, dy; // (dx,dy) - current translation vector
-	protected float theta; // current rotational angle
 	protected Structure structure; // geometric pieces of an object: rectangles, circles etc.
+	protected float x, y; // (x,y) - current center of mass, structure elements are positioned relative to this point
+	protected float vx, vy; // (vx,vy) - current velocity vector
+	protected float ax, ay; // (ax,ay) - current acceleration vector
+	protected float omega; // current angular velocity
+	protected float m; // mass
+	protected boolean fixedT; // fixed translational movement (walls, moving walls, bouncers etc)
+	protected boolean fixedR; // fixed rotational movement (fans, windmills etc)
 	
-	public GameObject(String id, float x, float y, float dx, float dy, float theta, Structure structure) {
+	// static objects (buildings, walls, portals etc)
+	public GameObject(String id, Structure structure, float x, float y) {
 		this.id = id;
+		this.structure = structure;
 		this.x = x;
 		this.y = y;
-		this.dx = dx;
-		this.dy = dy;
-		this.theta = theta;
-		this.structure = structure;
+		this.vx = 0;
+		this.vy = 0;
+		this.ax = 0;
+		this.ay = 0;
+		this.omega = 0;
+		this.m = 0;
+		this.fixedT = true;
+		this.fixedR = true;
 	}
+	
+	// moving walls etc
+	public GameObject(String id, Structure structure, float x, float y, float vx, float vy) {
+		this.id = id;
+		this.structure = structure;
+		this.x = x;
+		this.y = y;
+		this.vx = vx;
+		this.vy = vy;
+		this.ax = 0;
+		this.ay = 0;
+		this.omega = 0;
+		this.m = 0;
+		this.fixedT = true;
+		this.fixedR = true;
+	}
+	
+	// windmills etc
+	public GameObject(String id, Structure structure, float x, float y, float omega) {
+		this.id = id;
+		this.structure = structure;
+		this.x = x;
+		this.y = y;
+		this.vx = 0;
+		this.vy = 0;
+		this.ax = 0;
+		this.ay = 0;
+		this.omega = omega;
+		this.m = 0;
+		this.fixedT = true;
+		this.fixedR = true;
+	}
+	
+	// an object that moves in the xy-plane but does not rotate around its center of mass
+	public GameObject(String id, Structure structure, float x, float y, float vx, float vy, float ax, float ay, float m) {
+		this.id = id;
+		this.structure = structure;
+		this.x = x;
+		this.y = y;
+		this.vx = vx;
+		this.vy = vy;
+		this.ax = ax;
+		this.ay = ay;
+		this.omega = 0;
+		this.m = m;
+		this.fixedT = false;
+		this.fixedR = true;
+	}
+	
+	// all kinds of objects
+	public GameObject(String id, Structure structure, float x, float y, float vx, float vy, float ax, float ay, float omega, float m) {
+		this.id = id;
+		this.structure = structure;
+		this.x = x;
+		this.y = y;
+		this.vx = vx;
+		this.vy = vy;
+		this.ax = ax;
+		this.ay = ay;
+		this.omega = omega;
+		this.m = m;
+		this.fixedT = false;
+		this.fixedR = false;
+	}
+	
+	public abstract void update(); // defines the changes to the object during time (x += vx; y += vy; vx += ax; vy += ay; etc)
 	
 	public void render(Graphics g) {
 		this.structure.render(g);
@@ -45,8 +122,45 @@ public abstract class GameObject {
 		this.structure.transform(at);
 	}
 	
-	public abstract void update(); // defines the changes to the object during time
-
+	public float getDistance(float x, float y) {
+		return (float)Math.sqrt(Math.pow(this.x-x, 2) + Math.pow(this.y-y, 2));
+	}
+	
+	public float getVelocity() {
+		return (float)Math.sqrt(vx*vx + vy*vy);
+	}
+	
+	public float getSquareVelocity() {
+		return vx*vx + vy*vy;
+	}
+	
+	public float getMomentumX() {
+		return m * vx;
+	}
+	
+	public float getMomentumY() {
+		return m * vy;
+	}
+	
+	public float getMomentOfInertia() {
+		Rectangle2D totalBounds = this.structure.getTotalBounds();
+		float x1 = (float)totalBounds.getX();
+		float y1 = (float)totalBounds.getY();
+		float x2 = x1 + (float)totalBounds.getWidth();
+		float y2 = y1 + (float)totalBounds.getHeight();
+		float maxDistance = Math.max(Math.max(this.getDistance(x1, y1), this.getDistance(x1, y2)), 
+									Math.max(this.getDistance(x2, y1), this.getDistance(x2, y2)));
+		return m * maxDistance * maxDistance / 2;
+	}
+	
+	public float getAngularMomentum() {
+		return this.getMomentOfInertia() * omega;
+	}
+	
+	public float getKineticEnergy() {
+		return m*this.getSquareVelocity()/2 + this.getMomentOfInertia()*omega*omega/2;
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -60,19 +174,39 @@ public abstract class GameObject {
 	}
 
 	public float getDx() {
-		return dx;
+		return vx;
 	}
 
 	public float getDy() {
-		return dy;
+		return vy;
 	}
 	
-	public float getTheta() {
-		return theta;
+	public float getOmega() {
+		return omega;
+	}
+	
+	public float getM() {
+		return m;
+	}
+	
+	public float getAx() {
+		return ax;
+	}
+	
+	public float getAy() {
+		return ay;
 	}
 
 	public Structure getStructure() {
 		return structure;
+	}
+
+	public boolean isFixedT() {
+		return fixedT;
+	}
+
+	public boolean isFixedR() {
+		return fixedR;
 	}
 
 	public void setId(String id) {
@@ -88,19 +222,39 @@ public abstract class GameObject {
 	}
 
 	public void setDx(float dx) {
-		this.dx = dx;
+		this.vx = dx;
 	}
 
 	public void setDy(float dy) {
-		this.dy = dy;
+		this.vy = dy;
 	}
 	
-	public void setTheta(float theta) {
-		this.theta = theta;
+	public void setOmega(float omega) {
+		this.omega = omega;
+	}
+	
+	public void setM(float m) {
+		this.m = m;
+	}
+	
+	public void setAx(float ax) {
+		this.ax = ax;
+	}
+	
+	public void setAy(float ay) {
+		this.ay = ay;
 	}
 
 	public void setStructure(Structure structure) {
 		this.structure = structure;
+	}
+	
+	public void setFixedT(boolean fixedT) {
+		this.fixedT = fixedT;
+	}
+
+	public void setFixedR(boolean fixedR) {
+		this.fixedR = fixedR;
 	}
 
 	public void add(Piece piece) {

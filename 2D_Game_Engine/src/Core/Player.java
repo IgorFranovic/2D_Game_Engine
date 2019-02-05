@@ -4,8 +4,8 @@ import GameGraphics.Structure;
 
 public class Player extends GameObject {
 	///player id has to be given in the following format: 'player1', 'player2', ... 
-	public Player(String id, float x, float y, float dx, float dy, float theta, Structure structure, ObjectHandler handler) {
-		super(id , x, y, dx, dy, theta, structure);
+	public Player(String id, Structure structure, float x, float y, ObjectHandler handler) {
+		super(id, structure, x, y);
 		
 	}
 
