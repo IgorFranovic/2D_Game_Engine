@@ -24,10 +24,11 @@ public class TilePanel extends JPanel {
 	public static int firstTileNumber = 0;
 	public static int listSize = 0;
 	public static int numberOfShownTiles = 8;
+	public static String[] assets;
 	
 	public TilePanel() {
 		File folder = new File(BuilderWindow.assetsPath + "LandTiles");
-		String[] assets = folder.list();
+		assets = folder.list();
 		
 		for (String asset : assets) {
             System.out.println(asset);

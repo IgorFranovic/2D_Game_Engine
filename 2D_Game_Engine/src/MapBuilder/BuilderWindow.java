@@ -43,7 +43,7 @@ public class BuilderWindow extends JFrame {
 	private static final long serialVersionUID = -7879429050579315307L;
 	
 	private int WIDTH, HEIGHT;
-	public static BufferedImage selectedImage;
+	public static String selectedImagePath = "";
 	public static int currentMouseX, currentMouseY, currentImageWidth = 40, currentImageHeight = 40;
 	public static boolean interactable;
 	public static boolean showBG = false, showINT = false;
@@ -82,6 +82,8 @@ public class BuilderWindow extends JFrame {
 	
 	private JTextField levelNameField;
 	
+	private JTextField loadPathField;
+	private JButton loadButton;
 
 
 
@@ -123,7 +125,7 @@ public class BuilderWindow extends JFrame {
 		ButtonListener bl = new ButtonListener();
 		
 		
-		int numberOfTiles = 12;
+		
 		int tileHeight = 80;
 		tilePanel = new TilePanel();
 		tilePanel.setLayout(null);
@@ -257,6 +259,18 @@ public class BuilderWindow extends JFrame {
 		undo.addActionListener(bl);
 		buildPanel.add(undo);
 		
+		
+		loadButton = new JButton("Load");
+		loadButton.setActionCommand("load");
+		loadButton.addActionListener(bl);
+		buildPanel.add(loadButton);
+		
+		loadPathField = new JTextField("Level_1");
+		loadPathField.setToolTipText("Name of the level to be loaded.");
+		buildPanel.add(loadPathField);
+		
+		
+		
 		CheckBoxListener cbl = new CheckBoxListener();
 		
 		interactableButton = new JCheckBox("Interactable");
@@ -368,17 +382,18 @@ public class BuilderWindow extends JFrame {
 					System.out.println("level dir: " + levelDirectory);
 					
 					new File(levelsPath + "" + levelName).mkdirs();
-					
+					//write Interactable objects
 					try {
 						///type object info into file
-						BufferedWriter bw = new BufferedWriter(new FileWriter(new File(levelDirectory + "" + levelName + ".dat")));
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File(levelDirectory + "" + levelName + "_IN.dat")));
 						int xCoord, yCoord, w, h;
 						String img = ""; //implement this later
-						for(int i = 0; i < drawPanel.interactableObjects.size(); i++) {
-							xCoord = drawPanel.interactableObjects.get(i).getXCoord();
-							yCoord = drawPanel.interactableObjects.get(i).getYCoord();
-							w = drawPanel.interactableObjects.get(i).getWidthDim();
-							h = drawPanel.interactableObjects.get(i).getHeightDim();
+						for(int i = 0; i < DrawPanel.interactableObjects.size(); i++) {
+							xCoord = DrawPanel.interactableObjects.get(i).getXCoord();
+							yCoord = DrawPanel.interactableObjects.get(i).getYCoord();
+							w = DrawPanel.interactableObjects.get(i).getWidthDim();
+							h = DrawPanel.interactableObjects.get(i).getHeightDim();
+							img = DrawPanel.interactableObjects.get(i).imagePath;
 							bw.write("Object_" + i + "= x:" + xCoord + "; y:" + yCoord + "; width:" + w + "; height:" + h + "; imagePath:" + img + ";");
 							bw.write(System.lineSeparator());
 						}
@@ -388,9 +403,29 @@ public class BuilderWindow extends JFrame {
 					catch (IOException eception) {
 						eception.printStackTrace();
 					}
+					//write uninteractable objects
+					try {
+						///type object info into file
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File(levelDirectory + "" + levelName + "_NI.dat")));
+						int xCoord, yCoord, w, h;
+						String img = ""; 
+						for(int i = 0; i < DrawPanel.backgroundObjects.size(); i++) {
+							xCoord = DrawPanel.backgroundObjects.get(i).getXCoord();
+							yCoord = DrawPanel.backgroundObjects.get(i).getYCoord();
+							w = DrawPanel.backgroundObjects.get(i).getWidthDim();
+							h = DrawPanel.backgroundObjects.get(i).getHeightDim();
+							img = DrawPanel.backgroundObjects.get(i).imagePath;
+							bw.write("Object_" + i + "=x:" + xCoord + "; y:" + yCoord + "; width:" + w + "; height:" + h + "; imagePath:" + img + ";");
+							bw.write(System.lineSeparator());
+						}
+						
+						bw.close();
+					}
+					catch (IOException eception) {
+						eception.printStackTrace();
+					}
 					
-					
-					LinkedList<Object> tempList = new LinkedList<Object>();
+					LinkedList<MapObject> tempList = new LinkedList<MapObject>();
 					tempList = DrawPanel.interactableObjects;
 					
 					interactable = true;
@@ -413,6 +448,73 @@ public class BuilderWindow extends JFrame {
 					drawPanel.repaint();
 					specialBuildCondition = false;
 
+				} break;
+				
+				case "load" : {
+					///INSERT LOADING PROCEDURE HERE
+					//load into interactable list
+					
+					drawPanel.clearList(true);
+					
+					try {
+						String loadPathName = loadPathField.getText();
+						BufferedReader br = new BufferedReader(new FileReader(new File(levelsPath + "" + loadPathName + "/" + loadPathName + "_IN.dat")));
+						String line;
+						int xCoord, yCoord, w, h;
+						String imgPath;
+						while((line = br.readLine()) != null) {
+							String[] objectInfo = line.split(":");
+							System.out.println("Ob info  |" + objectInfo[1]);
+							xCoord = Integer.parseInt(objectInfo[1].substring(0, objectInfo[1].indexOf(';')));
+							yCoord = Integer.parseInt(objectInfo[2].substring(0, objectInfo[2].indexOf(';')));
+							w = Integer.parseInt(objectInfo[3].substring(0, objectInfo[3].indexOf(';')));
+							h = Integer.parseInt(objectInfo[4].substring(0, objectInfo[4].indexOf(';')));
+							imgPath = objectInfo[5].substring(0, objectInfo[5].indexOf(';'));
+							System.out.println("image path:" + imgPath);
+							System.out.println(xCoord + "  " + yCoord + "  " + w + "  " + h + "  " + imgPath);
+							MapObject newObject = new MapObject(xCoord, yCoord, w, h, imgPath, true);
+							DrawPanel.interactableObjects.add(newObject);							
+						}
+						drawInteractablePanel.repaint();
+						br.close();
+					}
+					catch (IOException exc) {
+						exc.printStackTrace();
+					}
+					//load into uninteractable list
+					
+					drawPanel.clearList(false);
+					try {
+						String loadPathName = loadPathField.getText();
+						BufferedReader br = new BufferedReader(new FileReader(new File(levelsPath + "" + loadPathName + "/" + loadPathName + "_NI.dat")));
+						String line;
+						int xCoord, yCoord, w, h;
+						String imgPath;
+						while((line = br.readLine()) != null) {
+							String[] objectInfo = line.split(":");
+							System.out.println("Ob info  |" + objectInfo[1]);
+							xCoord = Integer.parseInt(objectInfo[1].substring(0, objectInfo[1].indexOf(';')));
+							yCoord = Integer.parseInt(objectInfo[2].substring(0, objectInfo[2].indexOf(';')));
+							w = Integer.parseInt(objectInfo[3].substring(0, objectInfo[3].indexOf(';')));
+							h = Integer.parseInt(objectInfo[4].substring(0, objectInfo[4].indexOf(';')));
+							imgPath = objectInfo[5].substring(0, objectInfo[5].indexOf(';'));
+							System.out.println(xCoord + "  " + yCoord + "  " + w + "  " + h + "  " + imgPath);
+							MapObject newObject = new MapObject(xCoord, yCoord, w, h, imgPath, false);
+							DrawPanel.backgroundObjects.add(newObject);
+							
+						}
+						
+						br.close();
+					}
+					catch (IOException exc) {
+						exc.printStackTrace();
+					}
+					
+					System.out.println("bgListSize: " + drawPanel.backgroundObjects.size() + " intListSize: " + drawPanel.interactableObjects.size());
+					
+					drawPanel.repaint();
+					
+					
 				}
 			
 			}
@@ -462,7 +564,13 @@ public class BuilderWindow extends JFrame {
 				int y = e.getY();
 				if(y < tilePanel.getHeight()) {
 					System.out.println("TCLICKED" + (TilePanel.firstTileNumber + x/(WIDTH/TilePanel.numberOfShownTiles)));
-					selectedImage = TilePanel.tiles.get(TilePanel.firstTileNumber + x/(WIDTH/TilePanel.numberOfShownTiles));	
+					BufferedImage selectedImage = TilePanel.tiles.get(TilePanel.firstTileNumber + x/(WIDTH/TilePanel.numberOfShownTiles));	
+					for(int i = 0; i < TilePanel.tiles.size(); i++) {
+						if(selectedImage.equals(TilePanel.tiles.get(i))) {
+							selectedImagePath = TilePanel.assets[i];
+							break;
+						}
+					}
 				}
 			
 			} else if(e.getSource().equals(drawPanel)) {
