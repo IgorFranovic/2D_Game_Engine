@@ -9,7 +9,7 @@ import GameGraphics.Structure;
 import GameGraphics.Vector;
 import Physics.CollisionInfo;
 
-public abstract class GameObject {
+public class GameObject {
 	
 	protected String id; // a way to identify an object
 	protected Structure structure; // geometric pieces of an object: rectangles, circles etc.
@@ -133,7 +133,19 @@ public abstract class GameObject {
 		this.handler = handler;
 	}
 	
-	public abstract void update(); // defines the changes to the object during time (x += vx; y += vy; vx += ax; vy += ay; etc)
+	private final float h = 0.1f;
+	
+	// defines the changes to the object during time (x += vx; y += vy; vx += ax; vy += ay; etc)
+	public void update() {
+		Vector dr = this.v.mul(h);
+		this.r = this.r.add(dr);
+		this.v = this.v.add(this.a.mul(h));
+		AffineTransform at = new AffineTransform();
+		at.setToTranslation(dr.getX(), dr.getY());
+		this.transform(at);
+		at.setToRotation(this.omega, this.r.getX(), this.r.getY());
+		this.transform(at);
+	}
 	
 	public void render(Graphics g) {
 		this.structure.render(g);

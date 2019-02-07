@@ -15,15 +15,18 @@ public class ObjectHandler {
 	}
 	
 	public void update() {
-		GameObject player = objectList.get(0);
-		player.update();
-		for(int i = 1; i< objectList.size(); i++) {
-			GameObject object = objectList.get(i);
+		for(GameObject object : this.objectList) {
 			object.update();
-			CollisionInfo c0i = player.getCollisionInfo(object);
-			if(c0i != null) {
-				System.out.println("collision happened");
-				CollisionHandler.handleCollision(player, object, c0i);
+		}
+		for(int i = 0; i < this.objectList.size()-1; i++) {
+			for(int j = i+1; j < this.objectList.size(); j++) {
+				GameObject Oi = this.objectList.get(i);
+				GameObject Oj = this.objectList.get(j);
+				CollisionInfo Cij = Oi.getCollisionInfo(Oj);
+				if(Cij != null) {
+					System.out.println(Cij.getN().getX() + " " + Cij.getN().getY());
+					CollisionHandler.handleCollision(Oi, Oj, Cij);
+				}
 			}
 		}
 	}
