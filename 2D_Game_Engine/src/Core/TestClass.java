@@ -5,6 +5,7 @@ import java.awt.Graphics;
 
 import Controls.KeyboardInput;
 import GameGraphics.Structure;
+import GameGraphics.Vector;
 
 /*
  * The game maker has to extend the class 'Run' and override the
@@ -38,8 +39,16 @@ public class TestClass extends Run {
 		
 		this.addKeyListener(new KeyboardInput(handler));
 		
-		handler.addObject(new Player("player1", new Structure("./2D_Game_Engine/Objects/avatar.dat", 200, 200), 200, 200, handler));
+		//handler.addObject(new Player("player1", new Structure("./2D_Game_Engine/Objects/avatar.dat", 200, 200), new Vector(200, 200), handler));
 		
+		handler.addObject(new GameObject("wall1", new Structure("./2D_Game_Engine/Objects/wall1.dat", 300, 300), 
+				new Vector(300,300), handler));
+		handler.addObject(new GameObject("obj21", new Structure("./2D_Game_Engine/Objects/obj2.dat", 200, 350), 
+				new Vector(200,350), new Vector(15,-5), new Vector(0,0), 0, 0, 5, handler));
+		handler.addObject(new GameObject("obj22", new Structure("./2D_Game_Engine/Objects/obj2.dat", 400, 250), 
+				new Vector(400,250), new Vector(-9, 15), new Vector(0,0), 0, 0, 5, handler));
+		handler.addObject(new GameObject("obj22", new Structure("./2D_Game_Engine/Objects/obj2.dat", 300, 200), 
+				new Vector(300,200), new Vector(0, 15), new Vector(0,0), 0, 0, 5, handler));
 	}
 
 

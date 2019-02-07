@@ -1,12 +1,12 @@
 package Core;
 
 import GameGraphics.Structure;
+import GameGraphics.Vector;
 
 public class Player extends GameObject {
 	///player id has to be given in the following format: 'player1', 'player2', ... 
-	public Player(String id, Structure structure, float x, float y, ObjectHandler handler) {
-		super(id, structure, x, y);
-		
+	public Player(String id, Structure structure, Vector r, ObjectHandler handler) {
+		super(id, structure, r, handler);
 	}
 
 	@Override

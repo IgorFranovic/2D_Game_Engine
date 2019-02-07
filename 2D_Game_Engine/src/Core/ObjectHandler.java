@@ -3,6 +3,9 @@ package Core;
 import java.awt.Graphics;
 import java.util.LinkedList;
 
+import Physics.CollisionHandler;
+import Physics.CollisionInfo;
+
 public class ObjectHandler {
 	
 	private LinkedList<GameObject> objectList;
@@ -12,8 +15,19 @@ public class ObjectHandler {
 	}
 	
 	public void update() {
-		for(int i = 0; i< objectList.size(); i++) {
-			objectList.get(i).update();
+		for(GameObject object : this.objectList) {
+			object.update();
+		}
+		for(int i = 0; i < this.objectList.size()-1; i++) {
+			for(int j = i+1; j < this.objectList.size(); j++) {
+				GameObject Oi = this.objectList.get(i);
+				GameObject Oj = this.objectList.get(j);
+				CollisionInfo Cij = Oi.getCollisionInfo(Oj);
+				if(Cij != null) {
+					System.out.println(Cij.getN().getX() + " " + Cij.getN().getY());
+					CollisionHandler.handleCollision(Oi, Oj, Cij);
+				}
+			}
 		}
 	}
 	

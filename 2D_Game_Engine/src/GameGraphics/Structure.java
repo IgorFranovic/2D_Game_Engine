@@ -16,7 +16,7 @@ import java.util.LinkedList;
 
 public class Structure {
 	
-	private LinkedList<Piece> struct;
+	private LinkedList<Piece> struct; // broken encapsulation
 	
 	public Structure() {
 		this.struct = new LinkedList<Piece>();
@@ -96,15 +96,15 @@ public class Structure {
 		}
 	}
 	
-	public boolean intersects(Structure s) {
+	public Vector getCollisionPoint(Structure s) {
 		for(Piece piece1 : this.struct) {
 			for(Piece piece2 : s.struct) {
-				if(piece1.intersects(piece2)) {
-					return true;
+				if(piece1.getShape().intersects(piece2.getShape().getBounds2D())) {
+					return piece1.getCollisionPoint(piece2);
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	public void transform(AffineTransform at) {
