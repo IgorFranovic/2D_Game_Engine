@@ -28,23 +28,61 @@ public class DrawPanel extends JPanel {
 		G.clearRect(0, 0, getWidth(), getHeight());
 		
 		
-		if(BuilderWindow.interactable == true) {
+		if(BuilderWindow.drawOverCursor == true) {
 			
-			if(BuilderWindow.selectedImagePath != "" && BuilderWindow.currentMouseX > 0 && BuilderWindow.currentMouseY > 0) {
-				MapObject newObject = new MapObject(BuilderWindow.currentMouseX, BuilderWindow.currentMouseY, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, BuilderWindow.selectedImagePath, BuilderWindow.interactable);
-				interactableObjects.add(newObject);
-//				G.drawImage(BuilderWindow.selectedImage, BuilderWindow.currentMouseX, BuilderWindow.currentMouseY, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, this);
+				//draw over cursor
+				G.drawImage(BuilderWindow.selectedImage, BuilderWindow.currentMouseX, BuilderWindow.currentMouseY, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, this);
+			
+		}
+			
+		if(BuilderWindow.drawOverCursor == false) {
+			System.out.println("TEST TEST TEST");
+			if(BuilderWindow.interactable == true) {
+				
+				if(BuilderWindow.selectedImagePath != "" && BuilderWindow.currentMouseX > 0 && BuilderWindow.currentMouseY > 0) {
+				
+					MapObject newObject = new MapObject(BuilderWindow.currentMouseX, BuilderWindow.currentMouseY, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, BuilderWindow.selectedImagePath, BuilderWindow.interactable);
+					interactableObjects.add(newObject);
+	//				G.drawImage(BuilderWindow.selectedImage, BuilderWindow.currentMouseX, BuilderWindow.currentMouseY, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, this);
+				}
+				
+			} else {
+				
+				if(BuilderWindow.selectedImagePath != "" && BuilderWindow.currentMouseX > 0 && BuilderWindow.currentMouseY > 0) {
+					//snap;       implement 4 sides
+					if(BuilderWindow.snapObjectButton.isSelected()) {
+						if(!backgroundObjects.isEmpty()) {
+							MapObject tempObject = backgroundObjects.getLast();
+							
+							if(BuilderWindow.currentMouseX > tempObject.getXCoord() + tempObject.getWidthDim() && BuilderWindow.currentMouseX < tempObject.getXCoord() + tempObject.getWidthDim() + BuilderWindow.currentImageWidth && BuilderWindow.currentMouseY >= tempObject.getYCoord() && BuilderWindow.currentMouseY <= tempObject.getYCoord() + BuilderWindow.currentImageHeight) {
+								MapObject newObject = new MapObject(tempObject.getXCoord() + tempObject.getWidthDim(), tempObject.getYCoord(), BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, BuilderWindow.selectedImagePath, BuilderWindow.interactable);
+								backgroundObjects.add(newObject);
+							} else if(BuilderWindow.currentMouseX < tempObject.getXCoord() && BuilderWindow.currentMouseX > tempObject.getXCoord() - BuilderWindow.currentImageWidth && BuilderWindow.currentMouseY >= tempObject.getYCoord() && BuilderWindow.currentMouseY <= tempObject.getYCoord() + BuilderWindow.currentImageHeight) {
+								MapObject newObject = new MapObject(tempObject.getXCoord() - BuilderWindow.currentImageWidth, tempObject.getYCoord(), BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, BuilderWindow.selectedImagePath, BuilderWindow.interactable);
+								backgroundObjects.add(newObject);
+							} else if(BuilderWindow.currentMouseY < tempObject.getYCoord() && BuilderWindow.currentMouseY >= tempObject.getYCoord() - BuilderWindow.currentImageHeight && BuilderWindow.currentMouseX >= tempObject.getXCoord() && BuilderWindow.currentMouseX <= tempObject.getXCoord() + tempObject.getXCoord() + BuilderWindow.currentImageWidth) {
+								MapObject newObject = new MapObject(tempObject.getXCoord(), tempObject.getYCoord() - BuilderWindow.currentImageHeight, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, BuilderWindow.selectedImagePath, BuilderWindow.interactable);
+								backgroundObjects.add(newObject);
+							} else if(BuilderWindow.currentMouseY > tempObject.getYCoord() && BuilderWindow.currentMouseY <= tempObject.getYCoord() + tempObject.getHeightDim() + BuilderWindow.currentImageHeight && BuilderWindow.currentMouseX >= tempObject.getXCoord() && BuilderWindow.currentMouseX <= tempObject.getXCoord() + tempObject.getXCoord() + BuilderWindow.currentImageWidth) {
+								MapObject newObject = new MapObject(tempObject.getXCoord(), tempObject.getYCoord() + tempObject.getHeightDim(), BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, BuilderWindow.selectedImagePath, BuilderWindow.interactable);
+								backgroundObjects.add(newObject);
+							}
+							
+						}
+					} else {
+						
+						MapObject newObject = new MapObject(BuilderWindow.currentMouseX, BuilderWindow.currentMouseY, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, BuilderWindow.selectedImagePath, BuilderWindow.interactable);
+						backgroundObjects.add(newObject);
+					}
+					
+					
+					
+				
+			//		System.out.println("Image added:" + BuilderWindow.selectedImagePath);
+	//				G.drawImage(BuilderWindow.selectedImage, BuilderWindow.currentMouseX, BuilderWindow.currentMouseY, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, this);
+				}
+				
 			}
-			
-		} else {
-			
-			if(BuilderWindow.selectedImagePath != "" && BuilderWindow.currentMouseX > 0 && BuilderWindow.currentMouseY > 0) {
-				MapObject newObject = new MapObject(BuilderWindow.currentMouseX, BuilderWindow.currentMouseY, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, BuilderWindow.selectedImagePath, BuilderWindow.interactable);
-				backgroundObjects.add(newObject);
-		//		System.out.println("Image added:" + BuilderWindow.selectedImagePath);
-//				G.drawImage(BuilderWindow.selectedImage, BuilderWindow.currentMouseX, BuilderWindow.currentMouseY, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, this);
-			}
-			
 		}
 		
 		if(BuilderWindow.showINT == true) {
@@ -66,7 +104,7 @@ public class DrawPanel extends JPanel {
 		}
 //		if(BuilderWindow.currentMouseX > 0)
 //		G.drawImage(BuilderWindow.selectedImage, BuilderWindow.currentMouseX, BuilderWindow.currentMouseY, BuilderWindow.currentImageWidth, BuilderWindow.currentImageHeight, this);
-		
+	
 		
 		
 		

@@ -48,6 +48,9 @@ public class BuilderWindow extends JFrame {
 	public static boolean interactable;
 	public static boolean showBG = false, showINT = false;
 	public static boolean specialBuildCondition = false;
+	public static boolean drawOverCursor = false;
+	public static BufferedImage selectedImage;
+	
 	public static String assetsPath;
 	public static String levelsPath;
 	
@@ -84,6 +87,8 @@ public class BuilderWindow extends JFrame {
 	
 	private JTextField loadPathField;
 	private JButton loadButton;
+	
+	public static JCheckBox snapObjectButton;
 
 
 
@@ -296,6 +301,7 @@ public class BuilderWindow extends JFrame {
 		buildPanel.add(intLayerButton);
 		
 		
+		
 		layerPanel = new JPanel();
 		
 		
@@ -307,6 +313,11 @@ public class BuilderWindow extends JFrame {
 		intLayerButton.doClick();
 		buildPanel.add(layerPanel);
 		
+		
+		snapObjectButton = new JCheckBox("Snap Objects");
+		snapObjectButton.setToolTipText("Tick this box if you want objects to snap together(ex. building blocks).");
+		snapObjectButton.setActionCommand("snapObjectButton");
+		buildPanel.add(snapObjectButton);
 		
 		controlPanel.add(buildPanel);
 		
@@ -546,15 +557,13 @@ public class BuilderWindow extends JFrame {
 			} else if(e.getActionCommand() == "intLayerButton") {
 				showINT = !showINT;
 				drawPanel.repaint();
-			}
-			
+			} 
 		}
 		
 	}
 	
 	private class MouseListener extends MouseAdapter {
-		
-		
+	
 		@Override
 		public void mousePressed(MouseEvent e) {
 		
@@ -564,7 +573,7 @@ public class BuilderWindow extends JFrame {
 				int y = e.getY();
 				if(y < tilePanel.getHeight()) {
 					System.out.println("TCLICKED" + (TilePanel.firstTileNumber + x/(WIDTH/TilePanel.numberOfShownTiles)));
-					BufferedImage selectedImage = TilePanel.tiles.get(TilePanel.firstTileNumber + x/(WIDTH/TilePanel.numberOfShownTiles));	
+					selectedImage = TilePanel.tiles.get(TilePanel.firstTileNumber + x/(WIDTH/TilePanel.numberOfShownTiles));	
 					for(int i = 0; i < TilePanel.tiles.size(); i++) {
 						if(selectedImage.equals(TilePanel.tiles.get(i))) {
 							selectedImagePath = TilePanel.assets[i];
@@ -574,22 +583,26 @@ public class BuilderWindow extends JFrame {
 				}
 			
 			} else if(e.getSource().equals(drawPanel)) {
+				drawOverCursor = false;
 				System.out.println("drawPanel c");
-				currentMouseX = e.getX() - 20;
-				currentMouseY = e.getY() - 20;
+				currentMouseX = e.getX();
+				currentMouseY = e.getY();
 				System.out.println("Mouse clicked in drawPanel at : " + currentMouseX + ", " + currentMouseY);
 				
 				drawPanel.repaint();
-
+				System.out.println(DrawPanel.backgroundObjects.size() + " IS THE SIZE");
+			
 			} else if(e.getSource().equals(drawInteractablePanel)) {
+				drawOverCursor = false;
 				
 				//drawInteractablePanel.requestFocus();
 				System.out.println("drawInteractablePanel c");
-				currentMouseX = e.getX() - 20;
-				currentMouseY = e.getY() - 20;
+				currentMouseX = e.getX() ;
+				currentMouseY = e.getY() ;
 				System.out.println("Mouse clicked in drawInteractablePanel at : " + currentMouseX + ", " + currentMouseY);
-				
 				drawInteractablePanel.repaint();
+				
+	
 			} else if(e.getSource().equals(layeredPane)) {
 				if(interactable == true) {
 					drawInteractablePanel.repaint();
@@ -601,18 +614,22 @@ public class BuilderWindow extends JFrame {
 		}
 		@Override
 		public void mouseDragged(MouseEvent e) {
+			
 			if(e.getSource().equals(drawPanel)) {
+				drawOverCursor = false;
 				System.out.println("drawPanel dragged");
-				currentMouseX = e.getX() - 20;
-				currentMouseY = e.getY() - 20;
+				currentMouseX = e.getX();
+				currentMouseY = e.getY();
 				System.out.println("Mouse clicked in drawPanel at : " + currentMouseX + ", " + currentMouseY);
 				
 				drawPanel.repaint();
+			
 				
 			} else if(e.getSource().equals(drawInteractablePanel)) {
+				drawOverCursor = false;
 				System.out.println("drawInteractablePanel dragged");
-				currentMouseX = e.getX() - 20;
-				currentMouseY = e.getY() - 20;
+				currentMouseX = e.getX();
+				currentMouseY = e.getY();
 				System.out.println("Mouse clicked in drawInteractablePanel at : " + currentMouseX + ", " + currentMouseY);
 				
 				drawInteractablePanel.repaint();
@@ -620,17 +637,42 @@ public class BuilderWindow extends JFrame {
 			}
 		}
 		@Override
+		public void mouseMoved(MouseEvent e) {
+			drawOverCursor = true;
+			if(e.getSource().equals(drawPanel) && drawOverCursor == true) {
+				currentMouseX = e.getX();
+				currentMouseY = e.getY();
+				System.out.println("Mouse dragged in drawPanel at : " + currentMouseX + ", " + currentMouseY);
+				drawPanel.repaint();
+				
+			} else if(e.getSource().equals(drawInteractablePanel) && drawOverCursor == true) {
+				currentMouseX = e.getX();
+				currentMouseY = e.getY();
+				System.out.println("Mouse dragged in drawPanel at : " + currentMouseX + ", " + currentMouseY);
+				drawInteractablePanel.repaint();
+				
+			}
+		}
+		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
+			int xGain =(int)(3 * (selectedImage.getWidth()*1.0 / selectedImage.getHeight())*1.0);
+			int yGain = 3;
+			System.out.println(selectedImage.getWidth() + "   " + selectedImage.getHeight());
+			System.out.println("XGAIN : " + xGain + "  YGAIN : " + yGain);
 			
 			if(e.getWheelRotation() > 0) {
 				System.out.println("Rotated downwards");
-				currentImageWidth -= 3;
-				currentImageHeight -= 2;
+				currentImageWidth -= xGain;
+				currentImageHeight -= yGain;
+				drawPanel.repaint();
+				drawInteractablePanel.repaint();
 				
 			} else if(e.getWheelRotation() < 0) {
 				System.out.println("Rotated upwards");
-				currentImageWidth += 3;
-				currentImageHeight += 2;
+				currentImageWidth += xGain;
+				currentImageHeight += yGain;
+				drawPanel.repaint();
+				drawInteractablePanel.repaint();
 			}
 		}
 		
@@ -677,5 +719,7 @@ public class BuilderWindow extends JFrame {
 //	public String getAssetsPath() {
 //		return this.assetsPath;
 //	}
+	
+	
 
 }
