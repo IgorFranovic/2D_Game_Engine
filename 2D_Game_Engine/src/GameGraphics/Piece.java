@@ -4,10 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 public class Piece {
 	
-	private Shape shape;
+	private Shape shape; // broken encapsulation
 	private Color color;
 	
 	public Piece(Shape shape, Color color) {
@@ -20,13 +21,13 @@ public class Piece {
 		G.fill(shape);
 	}
 	
-	public boolean intersects(Piece piece) {
-		if(this.shape.intersects(piece.shape.getBounds2D())) {
-			return true;
-		}
-		else {
-			return false;
-		}
+	public Vector getCollisionPoint(Piece piece) {
+		Rectangle2D intersection = this.shape.getBounds2D().createIntersection(piece.shape.getBounds2D());
+		float x = (float)intersection.getX();
+		float y = (float)intersection.getY();
+		float w = (float)intersection.getWidth();
+		float h = (float)intersection.getHeight();
+		return new Vector(x + w/2, y + h/2);
 	}
 	
 	public void transform(AffineTransform at) {

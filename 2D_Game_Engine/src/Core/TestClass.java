@@ -5,6 +5,7 @@ import java.awt.Graphics;
 
 import Controls.KeyboardInput;
 import GameGraphics.Structure;
+import GameGraphics.Vector;
 
 /*
  * The game maker has to extend the class 'Run' and override the
@@ -38,7 +39,7 @@ public class TestClass extends Run {
 		
 		this.addKeyListener(new KeyboardInput(handler));
 		
-		handler.addObject(new Player("player1", new Structure("./2D_Game_Engine/Objects/avatar.dat", 200, 200), 200, 200, handler));
+		handler.addObject(new Player("player1", new Structure("./2D_Game_Engine/Objects/avatar.dat", 200, 200), new Vector(200, 200), handler));
 		
 	}
 
