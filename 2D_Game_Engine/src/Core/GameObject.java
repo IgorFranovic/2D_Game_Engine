@@ -5,6 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 import GameGraphics.Piece;
+import GameGraphics.PiecePair;
 import GameGraphics.Structure;
 import GameGraphics.Vector;
 import Physics.CollisionInfo;
@@ -143,7 +144,7 @@ public class GameObject {
 		AffineTransform at = new AffineTransform();
 		at.setToTranslation(dr.getX(), dr.getY());
 		this.transform(at);
-		at.setToRotation(this.omega, this.r.getX(), this.r.getY());
+		at.setToRotation(this.omega*h, this.r.getX(), this.r.getY());
 		this.transform(at);
 	}
 	
@@ -156,51 +157,38 @@ public class GameObject {
 	// we check for intersections between bounding rectangles of those shapes
 	// next candidate for collision detection is ray casting algorithm
 	public CollisionInfo getCollisionInfo(GameObject object) {
-		// this = A, object = B
-		Vector P = this.structure.getCollisionPoint(object.structure); 
-		if(P != null) {
+		PiecePair collidingPieces = this.structure.getCollidingPieces(object.structure);
+		if(collidingPieces != null) {
+			Piece A = collidingPieces.A;
+			Piece B = collidingPieces.B;
+			Rectangle2D intersection = A.getShape().getBounds2D().createIntersection(B.getShape().getBounds2D());
+			float x = (float)intersection.getX();
+			float y = (float)intersection.getY();
+			float w = (float)intersection.getWidth();
+			float h = (float)intersection.getHeight();
+			
+			Vector P = new Vector(x + w/2, y + h/2); 
 			Vector vAB = this.getV().sub(object.getV());
-			// computing n like this - questionable
-			float argAB = vAB.tanArg();
+			
 			float nx = 0, ny = 0;
-			if(-1 <= argAB && argAB <= 1) {
-				if(this.r.getX() < object.getR().getX()) {
+			
+			if(w < h) {
+				if(A.getShape().getBounds2D().getX() < B.getShape().getBounds2D().getX()) {
 					nx = -1;
-					ny = 0;
-				}
-				else if(this.r.getX() > object.getR().getX()) {
-					nx = 1;
-					ny = 0;
 				}
 				else {
-					nx = 0;
-					if(this.r.getY() < object.getR().getY()) {
-						ny = 1;
-					}
-					else {
-						ny = -1;
-					}
+					nx = 1;
 				}
 			}
 			else {
-				if(this.r.getY() < object.getR().getY()) {
-					nx = 0;
-					ny = 1;
-				}
-				else if(this.r.getY() > object.getR().getY()) {
-					nx = 0;
+				if(A.getShape().getBounds2D().getY() < B.getShape().getBounds2D().getY()) {
 					ny = -1;
 				}
 				else {
-					ny = 0;
-					if(this.r.getX() < object.getR().getX()) {
-						nx = -1;
-					}
-					else {
-						nx = 1;
-					}
+					ny = 1;
 				}
 			}
+			
 			Vector n = new Vector(nx, ny);
 			return new CollisionInfo(1, P, n, vAB); // e = 1 just for beta testing
 		}

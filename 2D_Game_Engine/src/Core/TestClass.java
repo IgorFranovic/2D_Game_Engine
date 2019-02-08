@@ -29,7 +29,7 @@ public class TestClass extends Run {
 	 */
 	private static final long serialVersionUID = -2047332610043354456L;
 	
-	public static final int WIDTH = 1200, HEIGHT = 600;
+	public static final int WIDTH = 1200, HEIGHT = 650;
 	private static ObjectHandler handler;
 	
 	public TestClass() {
@@ -41,14 +41,22 @@ public class TestClass extends Run {
 		
 		//handler.addObject(new Player("player1", new Structure("./2D_Game_Engine/Objects/avatar.dat", 200, 200), new Vector(200, 200), handler));
 		
-		handler.addObject(new GameObject("wall1", new Structure("./2D_Game_Engine/Objects/wall1.dat", 300, 300), 
-				new Vector(300,300), handler));
-		handler.addObject(new GameObject("obj21", new Structure("./2D_Game_Engine/Objects/obj2.dat", 200, 350), 
-				new Vector(200,350), new Vector(15,-5), new Vector(0,0), 0, 0, 5, handler));
-		handler.addObject(new GameObject("obj22", new Structure("./2D_Game_Engine/Objects/obj2.dat", 400, 250), 
-				new Vector(400,250), new Vector(-9, 15), new Vector(0,0), 0, 0, 5, handler));
-		handler.addObject(new GameObject("obj22", new Structure("./2D_Game_Engine/Objects/obj2.dat", 300, 200), 
-				new Vector(300,200), new Vector(0, 15), new Vector(0,0), 0, 0, 5, handler));
+		//handler.addObject(new GameObject("wall1", new Structure("./2D_Game_Engine/Objects/wall1.dat", 300, 300), 
+		//		new Vector(300,300), handler));
+		
+		handler.addObject(new GameObject("top", new Structure("./2D_Game_Engine/Objects/wallH.dat", 400, 40), 
+				new Vector(400,40), handler));
+		handler.addObject(new GameObject("bottom", new Structure("./2D_Game_Engine/Objects/wallH.dat", 400, 550), 
+				new Vector(400,550), handler));
+		handler.addObject(new GameObject("left", new Structure("./2D_Game_Engine/Objects/wallV.dat", 40, 300), 
+				new Vector(40,300), handler));
+		handler.addObject(new GameObject("right", new Structure("./2D_Game_Engine/Objects/wallV.dat", 750, 300), 
+				new Vector(750,300), handler));
+		
+		handler.addObject(new GameObject("obj11", new Structure("./2D_Game_Engine/Objects/obj1.dat", 200, 350), 
+				new Vector(200,350), new Vector(15,-5), new Vector(0,2), 0, 0, 5, handler));
+		handler.addObject(new GameObject("obj12", new Structure("./2D_Game_Engine/Objects/obj1.dat", 400, 250), 
+				new Vector(400,250), new Vector(-9, 15), new Vector(0,2), 0, 0, 5, handler));
 	}
 
 

@@ -21,15 +21,6 @@ public class Piece {
 		G.fill(shape);
 	}
 	
-	public Vector getCollisionPoint(Piece piece) {
-		Rectangle2D intersection = this.shape.getBounds2D().createIntersection(piece.shape.getBounds2D());
-		float x = (float)intersection.getX();
-		float y = (float)intersection.getY();
-		float w = (float)intersection.getWidth();
-		float h = (float)intersection.getHeight();
-		return new Vector(x + w/2, y + h/2);
-	}
-	
 	public void transform(AffineTransform at) {
 		this.shape = at.createTransformedShape(this.shape);
 	}
