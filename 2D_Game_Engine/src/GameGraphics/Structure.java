@@ -87,8 +87,8 @@ public class Structure {
 		Graphics2D G = (Graphics2D)g;	
 		
 		for(Piece piece : struct) {
-			//G.setColor(new Color(100, 100, 100, 100));
-			//G.fill(piece.getShape().getBounds2D());
+			G.setColor(new Color(100, 100, 100, 100));
+			G.fill(piece.getShape().getBounds2D());
 			// just to demonstrate that the use of AABB algorithm is justified for objects that have an optimal structure
 			// it should work very well for avatar.dat structure 
 			// but the performance will probably be poor for object.dat structure (rotate the plane for pi/4 radians to see the issue)

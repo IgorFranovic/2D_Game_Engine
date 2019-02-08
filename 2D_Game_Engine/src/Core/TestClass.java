@@ -53,10 +53,13 @@ public class TestClass extends Run {
 		handler.addObject(new GameObject("right", new Structure("./2D_Game_Engine/Objects/wallV.dat", 750, 300), 
 				new Vector(750,300), handler));
 		
-		handler.addObject(new GameObject("obj21", new Structure("./2D_Game_Engine/Objects/obj1.dat", 200, 350), 
-				new Vector(200,350), new Vector(15,-5), new Vector(0,2), 0, 0, 5, handler));
-		handler.addObject(new GameObject("obj22", new Structure("./2D_Game_Engine/Objects/obj1.dat", 400, 250), 
-				new Vector(400,250), new Vector(-9, 15), new Vector(0,2), 0, 0, 5, handler));
+		handler.addObject(new GameObject("windmill", new Structure("./2D_Game_Engine/Objects/windmill1.dat", 400, 300), 
+				new Vector(400,300), 0, 0, 5, handler));
+		
+		handler.addObject(new GameObject("obj21", new Structure("./2D_Game_Engine/Objects/obj2.dat", 200, 450), 
+				new Vector(200,450), new Vector(15,-5), new Vector(0,0), 0, 0, 5, handler));
+		handler.addObject(new GameObject("obj22", new Structure("./2D_Game_Engine/Objects/obj2.dat", 600, 200), 
+				new Vector(600,200), new Vector(-9, 15), new Vector(0,0), 0, 0, 5, handler));
 		//handler.addObject(new GameObject("obj23", new Structure("./2D_Game_Engine/Objects/obj2.dat", 300, 300), 
 		//		new Vector(300,300), new Vector(0, 20), new Vector(0,0), 0, 0, 5, handler));
 	}

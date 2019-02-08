@@ -26,8 +26,8 @@ public class GameObject {
 	protected boolean fixedT; // fixed translational movement (walls, moving walls, bouncers etc)
 	protected boolean fixedR; // fixed rotational movement (fans, windmills etc)
 	
-	protected float e; // elasticity coefficient (0.9 by default)
-	protected float mu; // friction coefficient (0.1 by default)
+	protected float e; // elasticity coefficient, 0<=e<=1 (0.9 by default)
+	protected float mu; // friction coefficient 0<=mu<=1 (0.1 by default)
 	
 	protected ObjectHandler handler;
 	
