@@ -26,6 +26,9 @@ public class GameObject {
 	protected boolean fixedT; // fixed translational movement (walls, moving walls, bouncers etc)
 	protected boolean fixedR; // fixed rotational movement (fans, windmills etc)
 	
+	protected float e; // elasticity coefficient (0.9 by default)
+	protected float mu; // friction coefficient (0.1 by default)
+	
 	protected ObjectHandler handler;
 	
 	// static objects (buildings, walls, portals etc)
@@ -43,6 +46,9 @@ public class GameObject {
 		this.fixedT = true; // collisions with other objects do not affect the velocity of the center of mass
 		this.fixedR = true; // collisions with other objects do not affect the angular velocity of the object
 		this.handler = handler;
+		
+		this.e = 0.9f;
+		this.mu = 0.1f;
 	}
 	
 	// moving walls etc
@@ -59,6 +65,9 @@ public class GameObject {
 		this.fixedT = true;
 		this.fixedR = true;
 		this.handler = handler;
+		
+		this.e = 0.9f;
+		this.mu = 0.1f;
 	}
 	
 	// windmills etc
@@ -75,6 +84,9 @@ public class GameObject {
 		this.fixedT = true;
 		this.fixedR = true;
 		this.handler = handler;
+		
+		this.e = 0.9f;
+		this.mu = 0.1f;
 	}
 	
 	// an object that does not rotate around its center of mass but its center of mass does move in the xy-plane freely
@@ -91,6 +103,9 @@ public class GameObject {
 		this.fixedT = false;
 		this.fixedR = true;
 		this.handler = handler;
+		
+		this.e = 0.9f;
+		this.mu = 0.1f;
 	}
 	
 	// an object that rotates around its center of mass freely but its center of mass does not move in the xy-plane
@@ -113,6 +128,9 @@ public class GameObject {
 		this.fixedT = true;
 		this.fixedR = false;
 		this.handler = handler;
+		
+		this.e = 0.9f;
+		this.mu = 0.1f;
 	}
 	
 	// all kinds of objects that can both translate and rotate freely in the xy-plane
@@ -132,24 +150,47 @@ public class GameObject {
 		this.fixedT = false;
 		this.fixedR = false;
 		this.handler = handler;
+		
+		this.e = 0.9f;
+		this.mu = 0.1f;
 	}
 	
-	private final float h = 0.1f;
+	private final float delta = 0.1f;
 	
 	// defines the changes to the object during time (x += vx; y += vy; vx += ax; vy += ay; etc)
 	public void update() {
-		Vector dr = this.v.mul(h);
+		Vector dr = this.v.mul(delta);
 		this.r = this.r.add(dr);
-		this.v = this.v.add(this.a.mul(h));
+		this.v = this.v.add(this.a.mul(delta));
 		AffineTransform at = new AffineTransform();
 		at.setToTranslation(dr.getX(), dr.getY());
 		this.transform(at);
-		at.setToRotation(this.omega*h, this.r.getX(), this.r.getY());
+		at.setToRotation(this.omega*delta, this.r.getX(), this.r.getY());
 		this.transform(at);
+	}
+	
+	public void translate(float dx, float dy) {
+		this.r.add(new Vector(dx, dy));
+		AffineTransform at = new AffineTransform();
+		at.setToTranslation(dx, dy);
+		this.transform(at);
+	}
+	
+	public void transform(AffineTransform at) {
+		this.structure.transform(at);
 	}
 	
 	public void render(Graphics g) {
 		this.structure.render(g);
+	}
+	
+	// a necessary evil
+	// when a stabilized object starts moving (for example because of a collision), v, a, omega and alpha have to be reset manually
+	public void stabilize() {
+		this.v = new Vector(0,0);
+		this.a = new Vector(0,0);
+		this.omega = 0;
+		this.alpha = 0;
 	}
 	
 	// current version of collision detection system uses the simplest form of AABB algorithm
@@ -175,30 +216,66 @@ public class GameObject {
 			if(w < h) {
 				if(A.getShape().getBounds2D().getX() < B.getShape().getBounds2D().getX()) {
 					nx = -1;
+					if(this.isFixedT()) {
+						object.translate(w, 0);
+						object.omega -= object.mu*Math.signum(object.omega);
+					}
+					else {
+						this.translate(-w, 0);
+						this.omega -= this.mu*Math.signum(this.omega);
+					}
 				}
 				else {
 					nx = 1;
+					if(this.isFixedT()) {
+						object.translate(-w, 0);
+						object.omega -= object.mu*Math.signum(object.omega);
+					}
+					else {
+						this.translate(w, 0);
+						this.omega -= this.mu*Math.signum(this.omega);
+					}
 				}
 			}
 			else {
 				if(A.getShape().getBounds2D().getY() < B.getShape().getBounds2D().getY()) {
 					ny = -1;
+					if(this.isFixedT()) {
+						object.translate(0, h);
+						object.omega -= object.mu*Math.signum(object.omega);
+					}
+					else {
+						this.translate(0, -h);
+						this.omega -= this.mu*Math.signum(this.omega);
+					}
 				}
 				else {
 					ny = 1;
+					if(this.isFixedT()) {
+						object.translate(0, -h);
+						object.omega -= object.mu*Math.signum(object.omega);
+					}
+					else {
+						this.translate(0, h);
+						this.omega -= this.mu*Math.signum(this.omega);
+					}
 				}
 			}
 			
+			if(this.getKineticEnergy() < 0.1) {
+				this.stabilize();
+			}
+			if(object.getKineticEnergy() < 0.1) {
+				object.stabilize();
+			}
+			
 			Vector n = new Vector(nx, ny);
+			
 			return new CollisionInfo(1, P, n, vAB); // e = 1 just for beta testing
 		}
 		else {
 			return null;
 		}
-	}
-	
-	public void transform(AffineTransform at) {
-		this.structure.transform(at);
 	}
 	
 	public float getDistance(Vector r) {
@@ -216,6 +293,10 @@ public class GameObject {
 	
 	public float getAngularMomentum() {
 		return this.I * omega;
+	}
+	
+	public float getKineticEnergy() {
+		return m*v.normSquared()/2 + I*omega*omega/2;
 	}
 	
 	public String getId() {
