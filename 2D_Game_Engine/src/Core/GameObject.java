@@ -1,9 +1,11 @@
 package Core;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
+import GameGraphics.Animation;
 import GameGraphics.Piece;
 import GameGraphics.PiecePair;
 import GameGraphics.Structure;
@@ -30,6 +32,7 @@ public class GameObject {
 	protected float mu; // friction coefficient 0<=mu<=1 (0.1 by default)
 	
 	protected ObjectHandler handler;
+	protected Animation animation; // null by default
 	
 	// static objects (buildings, walls, portals etc)
 	public GameObject(String id, Structure structure, Vector r, ObjectHandler handler) {
@@ -49,6 +52,7 @@ public class GameObject {
 		
 		this.e = 0.9f;
 		this.mu = 0.1f;
+		this.animation = null;
 	}
 	
 	// moving walls etc
@@ -68,6 +72,7 @@ public class GameObject {
 		
 		this.e = 0.9f;
 		this.mu = 0.1f;
+		this.animation = null;
 	}
 	
 	// windmills etc
@@ -87,6 +92,7 @@ public class GameObject {
 		
 		this.e = 0.9f;
 		this.mu = 0.1f;
+		this.animation = null;
 	}
 	
 	// an object that does not rotate around its center of mass but its center of mass does move in the xy-plane freely
@@ -106,6 +112,7 @@ public class GameObject {
 		
 		this.e = 0.9f;
 		this.mu = 0.1f;
+		this.animation = null;
 	}
 	
 	// an object that rotates around its center of mass freely but its center of mass does not move in the xy-plane
@@ -131,6 +138,7 @@ public class GameObject {
 		
 		this.e = 0.9f;
 		this.mu = 0.1f;
+		this.animation = null;
 	}
 	
 	// all kinds of objects that can both translate and rotate freely in the xy-plane
@@ -153,20 +161,27 @@ public class GameObject {
 		
 		this.e = 0.9f;
 		this.mu = 0.1f;
+		this.animation = null;
 	}
 	
 	private final float delta = 0.1f;
 	
 	// defines the changes to the object during time (x += vx; y += vy; vx += ax; vy += ay; etc)
 	public void update() {
+		this.animation.update();
 		Vector dr = this.v.mul(delta);
 		this.r = this.r.add(dr);
 		this.v = this.v.add(this.a.mul(delta));
 		AffineTransform at = new AffineTransform();
 		at.setToTranslation(dr.getX(), dr.getY());
 		this.transform(at);
+		this.animation.transform(at);
 		at.setToRotation(this.omega*delta, this.r.getX(), this.r.getY());
 		this.transform(at);
+		this.animation.transform(at);
+		if(!this.animation.isRunning()) {
+			this.animation = null;
+		}
 	}
 	
 	public void translate(float dx, float dy) {
@@ -181,7 +196,13 @@ public class GameObject {
 	}
 	
 	public void render(Graphics g) {
+		// there is a bug that makes the center of mass deviate from its fixed position, yet to be fixed
+		//g.setColor(Color.BLACK);
+		//g.fillOval((int)this.r.getX()-2, (int)this.r.getY()-2, 5, 5);
 		this.structure.render(g);
+		if(this.animation != null && this.animation.isRunning()) {
+			this.animation.render(g);
+		}
 	}
 	
 	// a necessary evil
@@ -389,6 +410,10 @@ public class GameObject {
 	
 	public void remove(int i) {
 		this.structure.remove(i);
+	}
+	
+	public void setAnimation(Animation animation) {
+		this.animation = animation;
 	}
 	
 }
