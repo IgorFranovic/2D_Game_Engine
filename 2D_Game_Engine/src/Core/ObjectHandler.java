@@ -24,7 +24,7 @@ public class ObjectHandler {
 				GameObject Oj = this.objectList.get(j);
 				CollisionInfo Cij = Oi.getCollisionInfo(Oj);
 				if(Cij != null) {
-					System.out.println(Cij.getN().getX() + " " + Cij.getN().getY());
+					//System.out.println(Cij.getN());
 					CollisionHandler.handleCollision(Oi, Oj, Cij);
 				}
 			}

@@ -49,6 +49,11 @@ public class Vector {
 	public Vector cap() {
 		return new Vector(-y, x);
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("(%f,%f)", x, y);
+	}
 
 	public float getX() {
 		return x;
