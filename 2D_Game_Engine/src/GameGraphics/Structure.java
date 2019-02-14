@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -26,6 +28,19 @@ public class Structure {
 	// impractical
 	public Structure(LinkedList<Piece> struct) {
 		this.struct = struct;
+	}
+	//NEW
+	public Structure(Rectangle rectangle, String imgPath) {
+		this.struct = new LinkedList<Piece>();
+
+		Piece p = new Piece(rectangle, imgPath, (int)rectangle.getX(), (int)rectangle.getY());
+		this.struct.add(p);
+	}
+	//NEW (not being used)
+	public Structure(Rectangle rectangle) {
+		this.struct = new LinkedList<Piece>();
+		Piece p = new Piece(rectangle, Color.black);
+		this.struct.add(p);
 	}
 	
 	// generate a structure from a file created using ObjectBuilder

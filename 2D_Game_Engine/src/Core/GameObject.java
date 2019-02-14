@@ -1,9 +1,9 @@
 package Core;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import GameGraphics.Animation;
 import GameGraphics.Piece;
@@ -13,6 +13,10 @@ import GameGraphics.Vector;
 import Physics.CollisionInfo;
 
 public class GameObject {
+	
+	///
+	private BufferedImage img;
+	///
 	
 	protected String id; // a way to identify an object
 	protected Structure structure; // geometric pieces of an object: rectangles, circles etc.
@@ -168,18 +172,22 @@ public class GameObject {
 	
 	// defines the changes to the object during time (x += vx; y += vy; vx += ax; vy += ay; etc)
 	public void update() {
-		this.animation.update();
+		if(this.animation != null)
+			this.animation.update();
 		Vector dr = this.v.mul(delta);
 		this.r = this.r.add(dr);
 		this.v = this.v.add(this.a.mul(delta));
 		AffineTransform at = new AffineTransform();
 		at.setToTranslation(dr.getX(), dr.getY());
 		this.transform(at);
-		this.animation.transform(at);
+		if(this.animation != null)
+			this.animation.transform(at);
 		at.setToRotation(this.omega*delta, this.r.getX(), this.r.getY());
 		this.transform(at);
-		this.animation.transform(at);
-		if(!this.animation.isRunning()) {
+		
+		
+		if(this.animation != null && !this.animation.isRunning()) {
+			this.animation.transform(at);
 			this.animation = null;
 		}
 	}
