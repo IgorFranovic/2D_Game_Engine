@@ -18,25 +18,26 @@ public class GameObject {
 	private BufferedImage img;
 	///
 	
-	protected String id; // a way to identify an object
-	protected Structure structure; // geometric pieces of an object: rectangles, circles etc.
-	protected Vector r; // r = (x,y) - current center of mass, structure elements are positioned relative to this point
-	protected Vector v; // current velocity of the center of mass
-	protected Vector a; // current acceleration of the center of mass
+	public String id; // a way to identify an object
+	public Structure structure; // geometric pieces of an object: rectangles, circles etc.
+	public Vector r; // r = (x,y) - current center of mass, structure elements are positioned relative to this point
+	public Vector v; // current velocity of the center of mass
+	public Vector a; // current acceleration of the center of mass
 	// r' = v, r" = v' = a
-	protected float omega; // current angular velocity
-	protected float alpha; // current angular acceleration
+	public float omega; // current angular velocity
+	public float alpha; // current angular acceleration
 	// omega' = alpha
-	protected float m; // mass
-	protected float I; // moment of inertia
-	protected boolean fixedT; // fixed translational movement (walls, moving walls, bouncers etc)
-	protected boolean fixedR; // fixed rotational movement (fans, windmills etc)
+	public float m; // mass
+	public float I; // moment of inertia
+	public boolean fixedT; // fixed translational movement (walls, moving walls, bouncers etc)
+	public boolean fixedR; // fixed rotational movement (fans, windmills etc)
 	
-	protected float e; // elasticity coefficient, 0<=e<=1 (0.9 by default)
-	protected float mu; // friction coefficient 0<=mu<=1 (0.1 by default)
+	public float e; // elasticity coefficient, 0<=e<=1 (0.9 by default)
+	public float mu; // friction coefficient 0<=mu<=1 (0.1 by default)
 	
-	protected ObjectHandler handler;
-	protected Animation animation; // null by default
+	public ObjectHandler handler;
+	
+	public Animation animation; // null by default
 	
 	// static objects (buildings, walls, portals etc)
 	public GameObject(String id, Structure structure, Vector r, ObjectHandler handler) {
@@ -172,22 +173,24 @@ public class GameObject {
 	
 	// defines the changes to the object during time (x += vx; y += vy; vx += ax; vy += ay; etc)
 	public void update() {
-		if(this.animation != null)
+		if(this.animation != null) {
 			this.animation.update();
+		}
 		Vector dr = this.v.mul(delta);
 		this.r = this.r.add(dr);
 		this.v = this.v.add(this.a.mul(delta));
 		AffineTransform at = new AffineTransform();
-		at.setToTranslation(dr.getX(), dr.getY());
+		at.setToTranslation(dr.x, dr.y);
 		this.transform(at);
-		if(this.animation != null)
+		if(this.animation != null) {
 			this.animation.transform(at);
-		at.setToRotation(this.omega*delta, this.r.getX(), this.r.getY());
+		}
+		at.setToRotation(this.omega*delta, this.r.x, this.r.y);
 		this.transform(at);
-		
-		
+		if(this.animation != null) {
+			this.animation.transform(at);
+		}
 		if(this.animation != null && !this.animation.isRunning()) {
-			this.animation.transform(at);
 			this.animation = null;
 		}
 	}
@@ -231,21 +234,21 @@ public class GameObject {
 		if(collidingPieces != null) {
 			Piece A = collidingPieces.A;
 			Piece B = collidingPieces.B;
-			Rectangle2D intersection = A.getShape().getBounds2D().createIntersection(B.getShape().getBounds2D());
+			Rectangle2D intersection = A.shape.getBounds2D().createIntersection(B.shape.getBounds2D());
 			float x = (float)intersection.getX();
 			float y = (float)intersection.getY();
 			float w = (float)intersection.getWidth();
 			float h = (float)intersection.getHeight();
 			
 			Vector P = new Vector(x + w/2, y + h/2); 
-			Vector vAB = this.getV().sub(object.getV());
+			Vector vAB = this.v.sub(object.v);
 			
 			float nx = 0, ny = 0;
 			
 			if(w < h) {
-				if(A.getShape().getBounds2D().getX() < B.getShape().getBounds2D().getX()) {
+				if(A.shape.getBounds2D().getX() < B.shape.getBounds2D().getX()) {
 					nx = -1;
-					if(this.isFixedT()) {
+					if(this.fixedT) {
 						object.translate(w, 0);
 						object.omega -= object.mu*Math.signum(object.omega);
 					}
@@ -256,7 +259,7 @@ public class GameObject {
 				}
 				else {
 					nx = 1;
-					if(this.isFixedT()) {
+					if(this.fixedT) {
 						object.translate(-w, 0);
 						object.omega -= object.mu*Math.signum(object.omega);
 					}
@@ -267,9 +270,9 @@ public class GameObject {
 				}
 			}
 			else {
-				if(A.getShape().getBounds2D().getY() < B.getShape().getBounds2D().getY()) {
+				if(A.shape.getBounds2D().getY() < B.shape.getBounds2D().getY()) {
 					ny = -1;
-					if(this.isFixedT()) {
+					if(this.fixedT) {
 						object.translate(0, h);
 						object.omega -= object.mu*Math.signum(object.omega);
 					}
@@ -280,7 +283,7 @@ public class GameObject {
 				}
 				else {
 					ny = 1;
-					if(this.isFixedT()) {
+					if(this.fixedT) {
 						object.translate(0, -h);
 						object.omega -= object.mu*Math.signum(object.omega);
 					}
@@ -327,7 +330,7 @@ public class GameObject {
 	public float getKineticEnergy() {
 		return m*v.normSquared()/2 + I*omega*omega/2;
 	}
-	
+	/*
 	public String getId() {
 		return id;
 	}
@@ -423,5 +426,5 @@ public class GameObject {
 	public void setAnimation(Animation animation) {
 		this.animation = animation;
 	}
-	
+	*/
 }

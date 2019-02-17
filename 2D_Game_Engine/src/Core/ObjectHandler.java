@@ -1,6 +1,7 @@
 package Core;
 
 import java.awt.Graphics;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import Physics.CollisionHandler;
@@ -8,16 +9,19 @@ import Physics.CollisionInfo;
 
 public class ObjectHandler {
 	
-	private LinkedList<GameObject> objectList;
+	public LinkedList<GameObject> objectList;
 	
 	public ObjectHandler() {
 		this.objectList = new LinkedList<GameObject>();
 	}
 	
 	public void update() {
-		for(GameObject object : this.objectList) {
-			object.update();
+		for(Iterator<GameObject> it = this.objectList.iterator(); it.hasNext(); ) {
+			it.next().update();
 		}
+		//for(GameObject object : this.objectList) {
+		//	object.update();
+		//}
 		for(int i = 0; i < this.objectList.size()-1; i++) {
 			for(int j = i+1; j < this.objectList.size(); j++) {
 				GameObject Oi = this.objectList.get(i);
@@ -48,9 +52,9 @@ public class ObjectHandler {
 	public void clearList() {
 		this.objectList.clear();
 	}
-	
+	/*
 	public LinkedList<GameObject> getObjectList(){
 		return this.objectList;
 	}
-
+	*/
 }

@@ -15,14 +15,15 @@ import MapBuilder.TilePanel;
 
 public class Piece {
 	
-	private Shape shape; // broken encapsulation
-	private Color color;
-	private String imgPath = "";
-	private int x, y;
+	public Shape shape; // broken encapsulation
+	public Color color;
+	public String imgPath = "";
+	private int x, y; // no getters/setters
 	
 	public Piece(Shape shape, Color color) {
 		this.shape = shape;
 		this.color = color;
+		this.imgPath = "";
 	}
 	public Piece(Shape shape, String imgPath, int x, int y) {
 		this.shape = shape;
@@ -33,17 +34,16 @@ public class Piece {
 	
 	public void render(Graphics2D G) {
 		G.setColor(this.color);
-		if(this.imgPath == "")
+		if(this.imgPath == "") {
 			G.fill(shape);
-
-		BufferedImage newImage;
-		newImage = getImage();
-		
-		if(newImage != null)
-			G.drawImage(newImage, this.x, this.y,(int) this.getShape().getBounds().getWidth(),(int) this.getShape().getBounds().getWidth(),  null);
+		}
+		else {
+			BufferedImage newImage;
+			newImage = getImage();
 			
-
-		
+			if(newImage != null)
+				G.drawImage(newImage, this.x, this.y, (int)this.shape.getBounds().getWidth(),(int) this.shape.getBounds().getWidth(),  null);
+		}
 	}
 	public BufferedImage getImage() {
 		BufferedImage newImage = null;
@@ -71,7 +71,7 @@ public class Piece {
 	public void transform(AffineTransform at) {
 		this.shape = at.createTransformedShape(this.shape);
 	}
-	
+	/*
 	public Shape getShape() {
 		return shape;
 	}
@@ -87,5 +87,5 @@ public class Piece {
 	public void setColor(Color color) {
 		this.color = color;
 	}
-	
+	*/
 }

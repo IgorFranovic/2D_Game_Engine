@@ -18,7 +18,7 @@ import java.util.LinkedList;
 
 public class Structure {
 	
-	private LinkedList<Piece> struct; // broken encapsulation
+	private LinkedList<Piece> struct;
 	
 	public Structure() {
 		this.struct = new LinkedList<Piece>();
@@ -28,6 +28,11 @@ public class Structure {
 	// impractical
 	public Structure(LinkedList<Piece> struct) {
 		this.struct = struct;
+	}
+	// creating bounding walls easily
+	public Structure(Shape shape, Color color) {
+		this.struct = new LinkedList<Piece>();
+		this.struct.add(new Piece(shape, color));
 	}
 	//NEW
 	public Structure(Rectangle rectangle, String imgPath) {
@@ -115,7 +120,7 @@ public class Structure {
 	public PiecePair getCollidingPieces(Structure s) {
 		for(Piece piece1 : this.struct) {
 			for(Piece piece2 : s.struct) {
-				if(piece1.getShape().intersects(piece2.getShape().getBounds2D())) {
+				if(piece1.shape.intersects(piece2.shape.getBounds2D())) {
 					return new PiecePair(piece1, piece2);
 				}
 			}
@@ -130,13 +135,13 @@ public class Structure {
 	}
 	
 	public Rectangle2D getTotalBounds() {
-		Rectangle2D union = this.struct.get(0).getShape().getBounds2D();
+		Rectangle2D union = this.struct.get(0).shape.getBounds2D();
 		for(int i = 1; i < this.struct.size(); i++) {
-			union = union.createUnion(this.struct.get(i).getShape().getBounds2D());
+			union = union.createUnion(this.struct.get(i).shape.getBounds2D());
 		}
 		return union;
 	}
-
+	/*
 	public LinkedList<Piece> getStruct() {
 		return struct;
 	}
@@ -144,7 +149,7 @@ public class Structure {
 	public void setStruct(LinkedList<Piece> struct) {
 		this.struct = struct;
 	}
-
+	*/
 	public void add(Piece piece) {
 		this.struct.add(piece);
 	}
