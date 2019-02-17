@@ -9,48 +9,48 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Structure {
 	
-	private LinkedList<Piece> struct;
+	private ArrayList<Piece> struct;
 	
 	public Structure() {
-		this.struct = new LinkedList<Piece>();
+		this.struct = new ArrayList<Piece>();
 		//...
 	}
 	
 	// impractical
-	public Structure(LinkedList<Piece> struct) {
+	public Structure(ArrayList<Piece> struct) {
 		this.struct = struct;
 	}
 	// creating bounding walls easily
 	public Structure(Shape shape, Color color) {
-		this.struct = new LinkedList<Piece>();
+		this.struct = new ArrayList<Piece>();
 		this.struct.add(new Piece(shape, color));
 	}
 	//NEW
 	public Structure(Rectangle rectangle, String imgPath) {
-		this.struct = new LinkedList<Piece>();
+		this.struct = new ArrayList<Piece>();
 
 		Piece p = new Piece(rectangle, imgPath, (int)rectangle.getX(), (int)rectangle.getY());
 		this.struct.add(p);
 	}
 	//NEW (not being used)
 	public Structure(Rectangle rectangle) {
-		this.struct = new LinkedList<Piece>();
+		this.struct = new ArrayList<Piece>();
 		Piece p = new Piece(rectangle, Color.black);
 		this.struct.add(p);
 	}
 	
 	// generate a structure from a file created using ObjectBuilder
 	public Structure(String file, float x0, float y0) {
-		this.struct = new LinkedList<Piece>();
+		this.struct = new ArrayList<Piece>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(new File(file)));
 			int cnt = Integer.parseInt(br.readLine());
@@ -106,20 +106,22 @@ public class Structure {
 	public void render(Graphics g) {
 		Graphics2D G = (Graphics2D)g;	
 		
-		for(Piece piece : struct) {
+		for(int i = 0; i < this.struct.size(); i++) {
 			//G.setColor(new Color(100, 100, 100, 100));
 			//G.fill(piece.getShape().getBounds2D());
 			// just to demonstrate that the use of AABB algorithm is justified for objects that have an optimal structure
 			// it should work very well for avatar.dat structure 
 			// but the performance will probably be poor for object.dat structure (rotate the plane for pi/4 radians to see the issue)
 			
-			piece.render(G);
+			this.struct.get(i).render(G);
 		}
 	}
 	
 	public PiecePair getCollidingPieces(Structure s) {
-		for(Piece piece1 : this.struct) {
-			for(Piece piece2 : s.struct) {
+		for(int i = 0; i < this.struct.size(); i++) {
+			for(int j = 0; j < s.struct.size(); j++) {
+				Piece piece1 = this.struct.get(i);
+				Piece piece2 = s.struct.get(j);
 				if(piece1.shape.intersects(piece2.shape.getBounds2D())) {
 					return new PiecePair(piece1, piece2);
 				}
@@ -129,8 +131,8 @@ public class Structure {
 	}
 	
 	public void transform(AffineTransform at) {
-		for(Piece piece : this.struct) {
-			piece.transform(at);
+		for(int i = 0; i < this.struct.size(); i++) {
+			this.struct.get(i).transform(at);
 		}
 	}
 	
