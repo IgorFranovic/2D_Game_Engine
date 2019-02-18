@@ -53,7 +53,7 @@ public class KeyboardListener extends KeyAdapter {
 			at.setToRotation(deg, r.x, r.y);
 			spacecraft.transform(at);
 		}
-		if(pressed.contains('m')) {
+		if(pressed.contains('s')) {
 			Vector offset = spacecraft.aim.mul(10);
 			float xl = spacecraft.leftLauncher.add(offset).x;
 			float yl = spacecraft.leftLauncher.add(offset).y;

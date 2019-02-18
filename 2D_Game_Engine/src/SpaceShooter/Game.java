@@ -2,13 +2,12 @@ package SpaceShooter;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
+import java.util.ArrayList;
 
 import Core.GameObject;
 import Core.ObjectHandler;
@@ -24,6 +23,8 @@ public class Game extends Run {
 	private static final long serialVersionUID = -4808304689488472220L;
 	public static final int WIDTH = 1280, HEIGHT = 720;
 	private ObjectHandler handler;
+	
+	private ArrayList<Shape> stars;
 	
 	public Game() {
 		new Window(WIDTH, HEIGHT, "TestClass", this);
@@ -48,6 +49,14 @@ public class Game extends Run {
 				new Vector(200,200), handler);
 		this.addKeyListener(new KeyboardListener(spacecraft, handler));
 		handler.addObject(spacecraft);
+		
+		stars = new ArrayList<Shape>();
+		for(int i = 0; i < 200; i++) {
+			float x = (float)(WIDTH*Math.random());
+			float y = (float)(HEIGHT*Math.random());
+			float d = (float)(10*Math.random());
+			stars.add(new Ellipse2D.Float(x, y, d, d));
+		}
 	}
 	
 	@Override
@@ -65,12 +74,17 @@ public class Game extends Run {
 		Graphics g = bufferStrategy.getDrawGraphics();
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
-		try {
+		/*try {
 			BufferedImage bgImage = ImageIO.read(new File("./2D_Game_Engine/src/SpaceShooter/stars_universe_space_118205_1280x720.jpg"));
 			g.drawImage(bgImage, 0, 0, WIDTH, HEIGHT, null);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}*/
+		g.setColor(Color.WHITE);
+		Graphics2D G = (Graphics2D)g;
+		for(int i = 0; i < this.stars.size(); i++) {
+			G.fill(stars.get(i));
 		}
 		handler.render(g);
 		g.dispose();
