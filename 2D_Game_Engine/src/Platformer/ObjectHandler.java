@@ -3,7 +3,7 @@ package Platformer;
 import java.awt.Graphics;
 import java.util.LinkedList;
 
-
+import Core.GameObject;
 import Physics.CollisionHandler;
 import Physics.CollisionInfo;
 
