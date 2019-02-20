@@ -71,7 +71,7 @@ public class Piece {
 	public void transform(AffineTransform at) {
 		this.shape = at.createTransformedShape(this.shape);
 	}
-	/*
+	
 	public Shape getShape() {
 		return shape;
 	}
@@ -87,5 +87,24 @@ public class Piece {
 	public void setColor(Color color) {
 		this.color = color;
 	}
-	*/
+	
+	public void setImgPath(String imgPath) {
+		this.imgPath = imgPath;
+	}
+	public String getImgPath() {
+		return this.imgPath;
+	}
+	public void setX(int x) {
+		this.x = x;
+	}
+	public int getX() {
+		return this.x;
+	}
+	public void setY(int y) {
+		this.y = y;
+	}
+	public int getY() {
+		return this.y;
+	}
+	
 }

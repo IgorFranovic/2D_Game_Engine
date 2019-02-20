@@ -5,6 +5,8 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 
 import GameGraphics.Vector;
+import Core.GameObject;
+import Core.ObjectHandler;
 
 public class KeyboardInput extends KeyAdapter {
 	
@@ -92,8 +94,8 @@ public class KeyboardInput extends KeyAdapter {
 						if(testCond == true) {
 							//	tempObject.getStructure().getStruct().get(0).setX(750);
 							//	tempObject.getStructure().getStruct().get(0).setY(40);
-								tempObject.setR(tempObject.getR().add(new Vector(540, -523)));
-								at.setToTranslation(540, -523);
+								tempObject.setR(tempObject.getR().add(new Vector(540, -490)));
+								at.setToTranslation(840, -490);
 								tempObject.transform(at);
 								String ips = "fadventurer-run3-00.png";
 								tempObject.getStructure().getStruct().get(0).setImgPath(ips);

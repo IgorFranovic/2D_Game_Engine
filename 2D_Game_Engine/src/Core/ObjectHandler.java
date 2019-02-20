@@ -48,9 +48,9 @@ public class ObjectHandler {
 	public void clearList() {
 		this.objectList.clear();
 	}
-	/*
-	public LinkedList<GameObject> getObjectList(){
+	
+	public ArrayList<GameObject> getObjectList(){
 		return this.objectList;
 	}
-	*/
+	
 }

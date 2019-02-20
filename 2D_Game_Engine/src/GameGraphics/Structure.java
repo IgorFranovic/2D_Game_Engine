@@ -143,15 +143,15 @@ public class Structure {
 		}
 		return union;
 	}
-	/*
-	public LinkedList<Piece> getStruct() {
+	
+	public ArrayList<Piece> getStruct() {
 		return struct;
 	}
 
-	public void setStruct(LinkedList<Piece> struct) {
+	public void setStruct(ArrayList<Piece> struct) {
 		this.struct = struct;
 	}
-	*/
+	
 	public void add(Piece piece) {
 		this.struct.add(piece);
 	}

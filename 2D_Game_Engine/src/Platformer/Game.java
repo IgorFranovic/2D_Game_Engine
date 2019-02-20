@@ -19,7 +19,8 @@ import javax.swing.JLabel;
 import GameGraphics.Structure;
 import GameGraphics.Vector;
 
-
+import Core.GameObject;
+import Core.ObjectHandler;
 
 
 public class Game extends Run {
@@ -63,13 +64,13 @@ public class Game extends Run {
 		
 		String playerImgPath = "adventurer-run3-00.png";
 		int pw = 100, ph = 74;
-		GameObject playerTest = new GameObject("playerTest1", new Structure(new Rectangle(100, 570, pw - 20, ph + 7), playerImgPath),
+		GameObject playerTest = new GameObject("playerTest1", new Structure(new Rectangle(100, 550, pw - 20, ph + 7), playerImgPath),
 				new Vector(100 + pw/2, 300 + ph/2), new Vector(0, 0), new Vector(0,0), 0, 0, 3, handler);
 		handler.addObject(playerTest);
 		
 		String enemyImgPath = "skelidletile000 (1).png";
 		int ew = 80, eh = 80;
-		this.enemyTest = new GameObject("enemyTest1", new Structure(new Rectangle(600, 40, ew - 20, eh + 7), enemyImgPath),
+		this.enemyTest = new GameObject("enemyTest1", new Structure(new Rectangle(850, 52, ew - 20, eh + 7), enemyImgPath),
 				new Vector(100 + ew/2, 300 + eh/2), new Vector(0,0), new Vector(0,0), 0, 0, 1, handler);
 		handler.addObject(enemyTest);
 		
@@ -157,8 +158,8 @@ public class Game extends Run {
 				try {
 					portalImage = ImageIO.read(new File("Assets/LandTiles/" + tempstr + portalCounter + ").png"));
 				
-						g.drawImage(portalImage, 200, 570, 60, 60, null);
-						g.drawImage(portalImage, 750, 30, 60, 60, null);
+						g.drawImage(portalImage, 200, 560, 60, 60, null);
+						g.drawImage(portalImage, 1050, 30, 80, 60, null);
 				} catch (IOException e) {
 					// 
 					e.printStackTrace();

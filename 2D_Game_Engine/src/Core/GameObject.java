@@ -330,7 +330,7 @@ public class GameObject {
 	public float getKineticEnergy() {
 		return m*v.normSquared()/2 + I*omega*omega/2;
 	}
-	/*
+	
 	public String getId() {
 		return id;
 	}
@@ -426,5 +426,5 @@ public class GameObject {
 	public void setAnimation(Animation animation) {
 		this.animation = animation;
 	}
-	*/
+	
 }

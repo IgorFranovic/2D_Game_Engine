@@ -2,7 +2,7 @@ package GameGraphics;
 
 public class Vector {
 
-	public final float x, y;
+	public float x, y;
 	// to avoid broken encapsulation (like in Piece and Structure)
 	// we do this right now because bugs are much more likely to happen because of messing with vector coordinates than with shapes
 	
@@ -58,7 +58,7 @@ public class Vector {
 	public String toString() {
 		return String.format("(%f,%f)", x, y);
 	}
-	/*
+	
 	public float getX() {
 		return x;
 	}
@@ -75,6 +75,6 @@ public class Vector {
 	public void setY(float y) {
 		this.y = y;
 	}
-	*/
+	
 	
 }
